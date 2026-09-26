@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>NAYA NAZAM — One street. One drain. One better tomorrow.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="device-frame">
+    <div class="device-screen">
+      <!-- ─── STATUS BAR ─── -->
+      <div class="status-bar">
+        <span class="time" id="clock">9:41</span>
+        <div class="status-icons">
+          <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><rect x="0" y="4" width="3" height="7" rx="1" fill="currentColor" opacity=".4"/><rect x="4.5" y="3" width="3" height="8" rx="1" fill="currentColor" opacity=".6"/><rect x="9" y="1.5" width="3" height="9.5" rx="1" fill="currentColor" opacity=".8"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" fill="currentColor"/></svg>
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.5C10.2 2.5 12.2 3.5 13.5 5L15 3.4C13.3 1.3 10.8 0 8 0C5.2 0 2.7 1.3 1 3.4L2.5 5C3.8 3.5 5.8 2.5 8 2.5Z" fill="currentColor"/><path d="M8 5.5C9.5 5.5 10.8 6.1 11.8 7.1L13.3 5.5C11.9 4.1 10 3.2 8 3.2C6 3.2 4.1 4.1 2.7 5.5L4.2 7.1C5.2 6.1 6.5 5.5 8 5.5Z" fill="currentColor"/><circle cx="8" cy="10" r="2" fill="currentColor"/></svg>
+          <div class="battery">
+            <div class="battery-fill"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════ -->
+      <!-- SCREEN: ONBOARDING 1               -->
+      <!-- ═══════════════════════════════════ -->
+      <div class="screen active" id="screen-onboard1">
+        <div class="onboard-bg">
+          <div class="onboard-illustration">
+            <div class="illo-sky">
+              <div class="rain-drop" style="left:15%;animation-delay:0s"></div>
+              <div class="rain-drop" style="left:30%;animation-delay:.3s"></div>
+              <div class="rain-drop" style="left:50%;animation-delay:.1s"></div>
+              <div class="rain-drop" style="left:65%;animation-delay:.5s"></div>
+              <div class="rain-drop" style="left:80%;animation-delay:.2s"></div>
+              <div class="rain-drop" style="left:92%;animation-delay:.7s"></div>
+            </div>
+            <!-- Street Scene -->
+            <div class="street-scene">
+              <div class="building b1"><div class="b-window"></div><div class="b-window"></div><div class="b-sign">آرائیں کپڑا</div></div>
+              <div class="building b2 tall"><div class="b-window"></div><div class="b-window"></div><div class="b-window"></div></div>
+              <div class="building b3"><div class="b-window"></div><div class="b-sign">دکان</div></div>
+              <div class="building b4 medium"><div class="b-window"></div><div class="b-window"></div></div>
+              <div class="road">
+                <div class="motorcycle">🛵</div>
+                <div class="drain-icon">🌊</div>
+              </div>
+              <div class="water-pool"></div>
+            </div>
+          </div>
+
+          <div class="onboard-logo-mark">
+            <div class="logo-drop">💧</div>
+            <span class="logo-name-small">NAYA NAZAM</span>
+          </div>
+        </div>
+
+        <div class="onboard-content">
+          <div class="demo-badge">DEMO MODE • Illustrative prototype data</div>
+          <h1 class="onboard-headline">One street. One drain.<br/>One better tomorrow.</h1>
+          <div class="process-flow-tag">REPORT → SPONSOR → MAINTAIN → VERIFY</div>
+          <p class="onboard-sub">Help identify and maintain flood-prone drains and streets in Kasur, Punjab.</p>
+          <div class="onboard-dots">
+            <span class="dot active"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+          <button class="btn-primary full" onclick="goTo('screen-onboard2')">Next →</button>
+          <button class="btn-ghost full mt-8" onclick="goTo('screen-home')">Skip</button>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════ -->
+      <!-- SCREEN: ONBOARDING 2               -->
+      <!-- ═══════════════════════════════════ -->
+      <div class="screen" id="screen-onboard2">
+        <div class="onboard-bg light-bg">
+          <div class="onboard-logo-mark dark">
+            <div class="logo-drop">💧</div>
+            <span class="logo-name-small dark">NAYA NAZAM</span>
+          </div>
+          <div class="three-step-illo">
+            <div class="step-card">
+              <div class="step-icon resident-icon">🏠</div>
+              <div class="step-label">Resident</div>
+              <div class="step-action">Reports Hotspot</div>
+            </div>
+            <div class="step-arrow">→</div>
+            <div class="step-card">
+              <div class="step-icon biz-icon">🏪</div>
+              <div class="step-label">Business</div>
+              <div class="step-action">Sponsors It</div>
+            </div>
+            <div class="step-arrow">→</div>
+            <div class="step-card">
+              <div class="step-icon worker-icon">👷</div>
+              <div class="step-label">Worker</div>
+              <div class="step-action">Maintains It</div>
+            </div>
+          </div>
+          <div class="flow-tagline">"Don't just report the problem.<br/>Help maintain the solution."</div>
+        </div>
+
+        <div class="onboard-content">
+          <div class="process-flow-tag" style="margin-bottom:4px">REPORT → SPONSOR → MAINTAIN → VERIFY</div>
+          <h1 class="onboard-headline dark">Report.<br/>Sponsor.<br/>Maintain.</h1>
+          <p class="onboard-sub dark">A community loop that keeps Kasur's streets flood-resilient — together.</p>
+          <div class="onboard-dots">
+            <span class="dot"></span>
+            <span class="dot active"></span>
+            <span class="dot"></span>
+          </div>
+          <button class="btn-primary full" onclick="goTo('screen-onboard3')">Next →</button>
+          <button class="btn-ghost full mt-8" onclick="goTo('screen-home')">Skip</button>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════ -->
+      <!-- SCREEN: ONBOARDING 3               -->
+      <!-- ═══════════════════════════════════ -->
+      <div class="screen" id="screen-onboard3">
+        <div class="onboard-bg gradient-bg">
+          <div class="onboard-logo-mark">
+            <div class="logo-drop big">💧</div>
+          </div>
+          <div class="ob3-visual">
+            <div class="ob3-city">🕌 🏘️ 🌿</div>
+            <div class="ob3-tagline-urdu">ایک گلی، ایک نالی، ایک بہتر کل</div>
+          </div>
+        </div>
+
+        <div class="onboard-content">
+          <h1 class="onboard-headline">NAYA NAZAM,<br/>One Street at<br/>a Time</h1>
+          <p class="onboard-sub">NAYA NAZAM — Ek Gali, Ek Drain, Ek Behtar Kal.</p>
+          <div class="onboard-dots">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot active"></span>
+          </div>
+          <button class="btn-primary full" onclick="goTo('screen-home')">Get Started</button>
+          <button class="btn-outline full mt-8" onclick="goTo('screen-sponsor-dash')">Continue as Business</button>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════ -->
+      <!-- SCREEN: HOME DASHBOARD             -->
+      <!-- ═══════════════════════════════════ -->
+      <div class="screen" id="screen-home">
+        <div class="screen-scroll">
+          <div class="home-header">
+            <div class="home-header-top">
+              <div>
+                <div class="greeting">Assalam-o-Alaikum 👋</div>
+                <div class="greeting-sub">Let's keep Kasur safe from waterlogging.</div>
+                <div class="demo-badge" style="margin-top:6px">DEMO MODE • Illustrative prototype data</div>
+              </div>
+              <div class="avatar" onclick="goTo('screen-profile')">M</div>
+            </div>
+          </div>
+
+          <!-- Alert Banner -->
+          <div class="alert-banner">
+            <span class="alert-icon">🌧️</span>
+            <div class="alert-text">
+              <strong>Rain Alert</strong>
+              <span>Heavy rain expected tonight. Check your area hotspots.</span>
+            </div>
+          </div>
+
+          <!-- Map Card -->
+          <div class="section-label">Nearby Flood Hotspots</div>
+          <div class="map-card" onclick="goTo('screen-map')">
+            <div class="map-visual">
+              <div class="leaflet-map" id="homeMap" role="img" aria-label="Illustrative map of Kasur with prototype hotspots"></div>
+              <div class="map-legend">
+                <span class="leg-item"><span class="leg-dot green-dot"></span>Clear</span>
+                <span class="leg-item"><span class="leg-dot orange-dot"></span>Attention</span>
+                <span class="leg-item"><span class="leg-dot red-dot"></span>Risk</span>
+              </div>
+            </div>
+            <div class="map-tap-hint">Prototype Hotspots are illustrative, not officially verified. Tap to open full map →</div>
+          </div>
+
+          <!-- Your Area -->
+          <div class="section-label">Your Area — <span class="urdu-label">Meri Gali</span></div>
+          <div class="area-header-card">
+            <div class="area-info">
+              <div class="area-name">Kot Ghulam Muhammad</div>
+              <div class="area-sub">Kasur • 2 hotspots nearby</div>
+            </div>
+            <div class="area-score-pill" onclick="goTo('screen-score')">89 pts →</div>
+          </div>
+
+          <!-- Hotspot Card -->
+          <div class="hotspot-card risk" onclick="goTo('screen-hotspot')">
+            <div class="hs-header">
+              <div class="risk-badge red">🔴 HIGH RISK</div>
+              <div class="hs-time">6 days ago</div>
+            </div>
+            <div class="hs-title">Drain #KS-104</div>
+            <div class="hs-location">📍 Kot Ghulam Muhammad</div>
+            <div class="hs-meta-row">
+              <span>🏠 42 homes</span>
+              <span>🏪 7 shops</span>
+              <span>🧹 Needs cleaning</span>
+            </div>
+            <div class="hs-actions">
+              <button class="btn-secondary" onclick="event.stopPropagation();goTo('screen-hotspot')">View Details</button>
+              <button class="btn-danger" onclick="event.stopPropagation();goTo('screen-report')">
+                <span class="urdu-inline">Masla Report Karein</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="hotspot-card attention" style="margin-bottom:8px">
+            <div class="hs-header">
+              <div class="risk-badge orange">🟠 NEEDS ATTENTION</div>
+              <div class="hs-time">2 days ago</div>
+            </div>
+            <div class="hs-title">Drain #KS-112</div>
+            <div class="hs-location">📍 Ferozepur Road, Kasur</div>
+            <div class="hs-meta-row">
+              <span>🏠 28 homes</span>
+              <span>🏪 3 shops</span>
+            </div>
+            <div class="hs-actions">
+              <button class="btn-secondary" onclick="event.stopPropagation()">View Details</button>
+              <button class="btn-warning" onclick="event.stopPropagation();goTo('screen-report')">Report Issue</button>
+            </div>
+          </div>
+
+          <!-- Quick Action -->
+          <div class="section-label">Quick Actions</div>
+          <div class="quick-actions">
+            <div class="qa-card" onclick="goTo('screen-postrain')">
+              <div class="qa-icon">🌧️</div>
+              <div class="qa-label">Post-Rain Check</div>
+            </div>
+            <div class="qa-card" onclick="goTo('screen-qr')">
+              <div class="qa-icon">📷</div>
+              <div class="qa-label">Scan QR</div>
+            </div>
+            <div class="qa-card" onclick="goTo('screen-score')">
+              <div class="qa-icon">🏆</div>
+              <div class="qa-label">Street Score</div>
+            </div>
+            <div class="qa-card" onclick="goTo('screen-sponsor')">
+              <div class="qa-icon">💚</div>
+              <div class="qa-label"><span class="urdu-inline">Sponsor Karein</span></div>
+            </div>
+          </div>
+
+          <!-- Community Stats -->
+          <div class="community-stats-card">
+            <div class="cs-title">Kasur Community</div>
+            <div class="cs-row">
+              <div class="cs-stat"><div class="cs-num">247</div><div class="cs-label">Reports Filed</div></div>
+              <div class="cs-stat"><div class="cs-num">38</div><div class="cs-label">Drains Cleaned</div></div>
+              <div class="cs-stat"><div class="cs-num">12</div><div class="cs-label">Businesses Sponsoring</div></div>
+            </div>
+          </div>
+
+          <!-- Why Kasur? -->
+          <div class="section-label">Why Kasur?</div>
+          <div class="why-kasur-card">
+            <p class="why-kasur-intro">Naya Nizaam is designed around a local maintenance problem rather than claiming to solve city-wide flooding.</p>
+            <div class="why-kasur-facts">
+              <div class="why-kasur-fact">• NDMA’s 2025 Post-Monsoon Review included Kasur among districts discussed in relation to poor access to clean water and sanitation in some temporary shelters.</div>
+              <div class="why-kasur-fact">• Peer-reviewed research has documented wastewater, drainage and groundwater-contamination challenges in Kasur, particularly around tannery-related industrial activity.</div>
+            </div>
+            <div class="why-kasur-disclaimer">Hotspots, household counts, worker profiles, and scores shown in this prototype are illustrative demonstration data.</div>
+          </div>
+
+          <div class="spacer-nav"></div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════ -->
+      <!-- SCREEN: MAP                         -->
+      <!-- ═══════════════════════════════════ -->
+      <div class="screen" id="screen-map">
+        <div class="map-header">
+          <button class="back-btn" onclick="goBack()">←</button>
+          <span class="screen-title">Kasur Flood Map</span>
+          <button class="filter-btn">⚙️</button>
+        </div>
+        <div class="full-map">
+          <div class="leaflet-map" id="kasurMap" role="application" aria-label="Interactive map of Kasur, Punjab, Pakistan"></div>
+        </div>
+        <div class="map-bottom-sheet">
+          <div class="sheet-handle"></div>
+          <div class="map-disclaimer">Prototype Hotspots are illustrative only; not officially verified flood hotspots.</div>
+          <div class="map-stats-row">
+            <div class="ms-item"><span class="ms-dot red-dot"></span><strong>3</strong> High Risk</div>
+            <div class="ms-item"><span class="ms-dot orange-dot"></span><strong>2</strong> Attention</div>
+            <div class="ms-item"><span class="ms-dot green-dot"></span><strong>4</strong> Clear</div>
+          </div>
+          <div class="hotspot-list-compact">
+            <div class="hlc-item" onclick="goTo('screen-hotspot')">
+              <span class="risk-dot red-dot"></span>
+              <div class="hlc-info">
+                <div class="hlc-name">Drain #KS-104 — Kot Ghulam Muhammad</div>
+                <div class="hlc-sub">Last cleaned 6 days ago • High Risk</div>
+              </div>
+              <span class="hlc-arrow">›</span>
+            </div>
+            <div class="hlc-item">
+              <span class="risk-dot orange-dot"></span>
+              <div class="hlc-info">
+                <div class="hlc-name">Drain #KS-112 — Ferozepur Road</div>
+                <div class="hlc-sub">Needs inspection • Waterlogging reported</div>
+              </div>
+              <span class="hlc-arrow">›</span>
+            </div>
+            <div class="hlc-item">
+              <span class="risk-dot orange-dot"></span>
+              <div class="hlc-info">
+                <div class="hlc-name">Drain #KS-098 — Near Bus Stand</div>
+                <div class="hlc-sub">Garbage choke reported • 2 reports</div>
+              </div>
+              <span class="hlc-arrow">›</span>
+            </div>
+          </div>
+        </div>
+        <div class="spacer-nav"></div>
+      </div>
+
+      <!-- ═══════════════════════════════════ -->
+      <!-- SCREEN: REPORT A HOTSPOT           -->
+      <!-- ═══════════════════════════════════ -->
+      <div class="screen" id="screen-report">
+        <div class="screen-header">
+          <button class="back-btn" onclick="goBack()">←</button>
+          <span class="screen-title">Masla Report Karein</span>
+          <span></span>
+        </div>
+        <div class="screen-scroll pad-top">
+          <div class="report-intro">
+            <div class="report-intro-icon">📋</div>
+            <p>Help your community by reporting a flood-prone spot in Kasur.</p>
+          </div>
+
+          <div class="form-section">
+            <div class="form-label">What is the problem?</div>
+            <div class="problem-grid">
+              <div class="prob-option selected" id="prob1" onclick="selectProb('prob1')">
+                <span>🚧</span><span>Blocked Drain</span>
+              </div>
+              <div class="prob-option" id="prob2" onclick="selectProb('prob2')">
+                <span>💧</span><span>Waterlogging</span>
+              </div>
+              <div class="prob-option" id="prob3" onclick="selectProb('prob3')">
+                <span>🗑️</span><span>Garbage Choke</span>
+              </div>
+              <div class="prob-option" id="prob4" onclick="selectProb('prob4')">
+                <span>🕳️</span><span>Damaged Drain</span>
+              </div>
+              <div class="prob-option" id="prob5" onclick="selectProb('prob5')">
+                <span>📌</span><span>Other</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-label">Take a Photo</div>
+            <div class="photo-upload" onclick="showPhotoFeedback()">
+              <div class="photo-upload-inner" id="photoUploadBox">
+                <div class="pu-icon">📷</div>
+                <div class="pu-text">Tap to take photo or upload</div>
+                <div class="pu-sub">Photo helps verify the problem</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-label">Location</div>
+            <div class="location-box">
+              <div class="loc-mini-map">
+                <div class="loc-road h" style="top:50%"></div>
+                <div class="loc-road v" style="left:40%"></div>
+                <div class="loc-pin">📍</div>
+                <div class="loc-label">Kot Ghulam Muhammad, Kasur</div>
+              </div>
+              <button class="btn-location">📍 Use Current Location</button>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-label">Describe the Problem</div>
+            <textarea class="text-area" placeholder="Example: Drain is blocked with plastic and garbage near the main chowk..."></textarea>
+          </div>
+
+          <div class="form-section">
+            <div class="form-label">Severity</div>
+            <div class="severity-row">
+              <div class="sev-opt" id="sev1" onclick="selectSev('sev1')">🟢 Minor</div>
+              <div class="sev-opt selected" id="sev2" onclick="selectSev('sev2')">🟠 Moderate</div>
+              <div class="sev-opt" id="sev3" onclick="selectSev('sev3')">🔴 Severe</div>
+            </div>
+          </div>
+
+          <button class="btn-primary full" onclick="goTo('screen-report-success')" style="margin:16px 0">Submit Report</button>
+          <div class="spacer-nav"></div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════ -->
+      <!-- SCREEN: REPORT SUCCESS             -->
+      <!-- ═══════════════════════════════════ -->
+      <div class="screen" id="screen-report-success">
+        <div class="success-screen">
+          <div class="success-icon-wrap">
+            <div class="success-circle">
+              <div class="check-anim">✓</div>
+            </div>
+          </div>
+          <h2 class="success-title">Report Submitted ✓</h2>
+          <p class="success-sub">Your report has been added to the Kasur flood map.</p>
+          <div class="report-id-card">
+            <div class="rid-label">Report ID</div>
+            <div class="rid-value">#KS-247</div>
+            <div class="rid-area">Kot Ghulam Muhammad, Kasur</div>
+            <div class="rid-type">🚧 Blocked Drain • Moderate Severity</div>
+            <div class="rid-time">26 September 2026 • 1:36 PM</div>
+          </div>
+          <div class="success-next">
+            <div class="sn-title">What happens next?</div>
+            <div class="sn-step"><span class="sn-dot blue"></span>Your report is reviewed by the community</div>
+            <div class="sn-step"><span class="sn-dot teal"></span>Hotspot registered on the Kasur map</div>
+            <div class="sn-step"><span class="sn-dot green"></span>A business can sponsor maintenance</div>
+            <div class="sn-step"><span class="sn-dot orange"></span>A verified worker is assigned</div>
+          </div>
+          <button class="btn-primary full" onclick="goTo('screen-home')">Back to Home</button>
+          <button class="btn-ghost full mt-8" onclick="goTo('screen-hotspot')">View Hotspot</button>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════ -->
+      <!-- SCREEN: HOTSPOT DETAILS            -->
+      <!-- ═══════════════════════════════════ -->
+      <div class="screen" id="screen-hotspot">
+        <div class="hotspot-header">
+          <div class="hs-header-top">
+            <button class="back-btn light" onclick="goBack()">←</button>
+            <div class="hs-risk-label">🔴 HIGH RISK</div>
+            <button class="share-btn">↗</button>
+          </div>
+          <div class="hs-hero-title">Flood Hotspot #KS-104</div>
+          <div class="hs-hero-loc">📍 Kot Ghulam Muhammad, Kasur</div>
+        </div>
+
+        <div class="screen-scroll">
+          <!-- Stats Row -->
+          <div class="hs-stats-row">
+            <div class="hs-stat-item">
+              <div class="hs-stat-icon">🏠</div>
+              <div class="hs-stat-val">42</div>
+              <div class="hs-stat-lbl">Homes</div>
+            </div>
+            <div class="hs-stat-item">
+              <div class="hs-stat-icon">🏪</div>
+              <div class="hs-stat-val">7</div>
+              <div class="hs-stat-lbl">Shops</div>
+            </div>
+            <div class="hs-stat-item">
+              <div class="hs-stat-icon">🧹</div>
+              <div class="hs-stat-val">6d</div>
+              <div class="hs-stat-lbl">Last Clean</div>
+            </div>
+            <div class="hs-stat-item">
+              <div class="hs-stat-icon">📅</div>
+              <div class="hs-stat-val">3d</div>
+              <div class="hs-stat-lbl">Next Insp.</div>
+            </div>
+          </div>
+
+          <!-- Worker Assigned -->
+          <div class="worker-card">
+            <div class="worker-avatar">👷</div>
+            <div class="worker-info">
+              <div class="worker-name">Ali Hassan</div>
+              <div class="worker-sub">Local Worker • Demo Profile</div>
+              <div class="worker-status">✅ Assigned to this drain</div>
+            </div>
+          </div>
+
+          <!-- Before / After -->
+          <div class="section-label">Before / After Evidence</div>
+          <div class="before-after">
+            <div class="ba-card before-card">
+              <div class="ba-label">Before</div>
+              <div class="ba-img">
+                <div class="ba-visual blocked">
+                  <div style="font-size:2.5rem">🌊</div>
+                  <div style="font-size:0.75rem;color:#e53e3e;font-weight:600;margin-top:4px">Blocked</div>
+                </div>
+              </div>
+              <div class="ba-date">20 Sep 2026</div>
+            </div>
+            <div class="ba-card after-card">
+              <div class="ba-label success-label">After</div>
+              <div class="ba-img">
+                <div class="ba-visual clean">
+                  <div style="font-size:2.5rem">✨</div>
+                  <div style="font-size:0.75rem;color:#38a169;font-weight:600;margin-top:4px">Clean</div>
+                </div>
+              </div>
+              <div class="ba-date">22 Sep 2026</div>
+            </div>
+          </div>
+
+          <!-- Sponsorship -->
+          <div class="sponsor-cta-card">
+            <div class="spon-top">
+              <div class="spon-icon">💚</div>
+              <div class="spon-info">
+                <div class="spon-title">Sponsor This Hotspot</div>
+                <div class="spon-sub">Help fund regular cleaning & inspections</div>
+              </div>
+              <div class="spon-price">Rs. 2,000<span>/mo</span></div>
+            </div>
+            <div class="spon-benefits">
+              <span class="spon-ben">✓ Regular cleaning</span>
+              <span class="spon-ben">✓ Inspection</span>
+              <span class="spon-ben">✓ Emergency cleanup</span>
+            </div>
+            <button class="btn-teal full" onclick="goTo('screen-sponsor')">
+              <span class="urdu-inline">Sponsor Karein</span> — Sponsor This Drain
+            </button>
+          </div>
+
+          <!-- QR Code -->
+          <div class="qr-section">
+            <div class="qr-title">Scan QR at this Hotspot</div>
+            <div class="qr-placeholder" onclick="goTo('screen-qr')">
+              <div class="qr-grid">
+                <div class="qr-corner tl"></div>
+                <div class="qr-corner tr"></div>
+                <div class="qr-inner"></div>
+                <div class="qr-corner bl"></div>
+                <div class="qr-corner br"></div>
+              </div>
+              <div class="qr-label">KS-104 • Kasur</div>
+            </div>
+          </div>
+
+          <!-- Report -->
+          <button class="btn-danger full" onclick="goTo('screen-report')" style="margin:0 0 16px">
+            Report a New Issue
+          </button>
+
+          <div class="spacer-nav"></div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════ -->
+      <!-- SCREEN: SPONSORSHIP                -->
+      <!-- ═══════════════════════════════════ -->
+      <div class="screen" id="screen-sponsor">
+        <div class="screen-header">
+          <button class="back-btn" onclick="goBack()">←</button>
+          <span class="screen-title">Sponsor Karein</span>
+          <span></span>
+        </div>
+        <div class="screen-scroll pad-top">
+          <div class="sponsor-hero">
+            <div class="sp-hero-icon">💧</div>
+            <div class="sp-hero-title">Sponsor Drain #KS-104</div>
+            <div class="sp-hero-sub">Kot Ghulam Muhammad, Kasur</div>
+          </div>
+
+          <div class="sp-benefits-card">
+            <div class="sp-ben-title">Your sponsorship helps pay for:</div>
+            <div class="sp-ben-item">✓ Regular drain cleaning</div>
+            <div class="sp-ben-item">✓ Scheduled inspection visits</div>
+            <div class="sp-ben-item">✓ Emergency post-rain cleanup</div>
+            <div class="sp-ben-item">✓ Before/after photo verification</div>
+            <div class="sp-ben-item">✓ Your business name on the drain badge</div>
+          </div>
+
+          <div class="form-label">Choose Amount</div>
+          <div class="amount-options">
+            <div class="amount-opt" id="amt1" onclick="selectAmt('amt1')">
+              <div class="amt-value">Rs. 1,000</div>
+              <div class="amt-label">Basic</div>
+              <div class="amt-sub">1x cleaning/month</div>
+            </div>
+            <div class="amount-opt selected" id="amt2" onclick="selectAmt('amt2')">
+              <div class="amt-value">Rs. 2,000</div>
+              <div class="amt-label">Standard ⭐</div>
+              <div class="amt-sub">2x cleaning + inspection</div>
+            </div>
+            <div class="amount-opt" id="amt3" onclick="selectAmt('amt3')">
+              <div class="amt-value">Rs. 3,000</div>
+              <div class="amt-label">Premium</div>
+              <div class="amt-sub">Weekly + emergency</div>
+            </div>
+          </div>
+          <div class="sponsorship-demo-note">Prototype sponsorship tiers — payment is simulated in this demo.</div>
+
+          <div class="form-label">Business Name</div>
+          <input class="text-input" placeholder="e.g. ABC General Store, Kasur" value="ABC General Store" />
+
+          <div class="form-label">Payment Method</div>
+          <div class="payment-methods">
+            <div class="pay-opt selected" id="pay1" onclick="selectPay('pay1')">
+              <div class="pay-logo ep">E</div>
+              <div class="pay-name">Easypaisa</div>
+            </div>
+            <div class="pay-opt" id="pay2" onclick="selectPay('pay2')">
+              <div class="pay-logo jc">J</div>
+              <div class="pay-name">JazzCash</div>
+            </div>
+            <div class="pay-opt" id="pay3" onclick="selectPay('pay3')">
+              <div class="pay-logo card">💳</div>
+              <div class="pay-name">Card</div>
+            </div>
+          </div>
+
+          <div class="sp-summary-row">
+            <span>Monthly sponsorship</span>
+            <strong>Rs. 2,000</strong>
+          </div>
+
+          <button class="btn-teal full" onclick="goTo('screen-sponsor-success')" style="margin:12px 0 8px">
+            Sponsor Now — Rs. 2,000/month
+          </button>
+          <div class="spacer-nav"></div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════ -->
+      <!-- SCREEN: SPONSOR SUCCESS            -->
+      <!-- ═══════════════════════════════════ -->
+      <div class="screen" id="screen-sponsor-success">
+        <div class="success-screen">
+          <div class="success-icon-wrap">
+            <div class="success-circle teal-circle">🎉</div>
+          </div>
+          <h2 class="success-title">Shukria! Thank You!</h2>
+          <p class="success-sub">You are now helping keep this Kasur street flood-resilient.</p>
+
+          <div class="sponsor-badge-card">
+            <div class="badge-icon">🏅</div>
+            <div class="badge-title">Official Drain Sponsor</div>
+            <div class="badge-drain">Drain #KS-104 • Kot Ghulam Muhammad</div>
+            <div class="badge-biz">Sponsored by <strong>ABC General Store</strong></div>
+            <div class="badge-month">September 2026</div>
+          </div>
+
+          <div class="sp-impact">
+            <div class="sp-impact-title">Your monthly impact:</div>
+            <div class="sp-impact-row"><span>🏠</span> 42 nearby homes in the service area</div>
+            <div class="sp-impact-row"><span>🧹</span> 2 cleanings per month</div>
+            <div class="sp-impact-row"><span>📸</span> Photo-verified maintenance</div>
+          </div>
+
+          <button class="btn-primary full" onclick="goTo('screen-home')">Back to Home</button>
+          <button class="btn-ghost full mt-8" onclick="goTo('screen-hotspot')">View Hotspot</button>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════ -->
+      <!-- SCREEN: SPONSOR DASHBOARD (BIZ)    -->
+      <!-- ═══════════════════════════════════ -->
+      <div class="screen" id="screen-sponsor-dash">
+        <div class="screen-scroll">
+          <div class="home-header teal-header">
+            <div class="home-header-top">
+              <div>
+                <div class="greeting light">Business Dashboard</div>
+                <div class="greeting-sub light">ABC General Store, Kasur</div>
+              </div>
+              <div class="avatar teal-av">B</div>
+            </div>
+          </div>
+
+          <div class="biz-impact-row">
+            <div class="biz-stat"><div class="biz-num">1</div><div class="biz-lbl">Drains Sponsored</div></div>
+            <div class="biz-stat"><div class="biz-num">42</div><div class="biz-lbl">Nearby Homes</div></div>
+            <div class="biz-stat"><div class="biz-num">2</div><div class="biz-lbl">Cleanings Done</div></div>
+          </div>
+
+          <div class="section-label">Sponsored Hotspots</div>
+          <div class="hotspot-card" style="border-left:4px solid var(--teal)">
+            <div class="hs-header">
+              <div class="risk-badge green">🟢 MAINTAINED</div>
+              <div class="hs-time">Active</div>
+            </div>
+            <div class="hs-title">Drain #KS-104</div>
+            <div class="hs-location">📍 Kot Ghulam Muhammad</div>
+            <div class="hs-meta-row">
+              <span>Rs. 2,000/month</span>
+              <span>🧹 Last cleaned 6d ago</span>
+            </div>
+            <div class="hs-actions">
+              <button class="btn-secondary" onclick="goTo('screen-hotspot')">View Report</button>
+              <button class="btn-teal-sm">Renew</button>
+            </div>
+          </div>
+
+          <div class="section-label">Sponsor a New Hotspot</div>
+          <div class="hotspot-card attention">
+            <div class="hs-header">
+              <div class="risk-badge orange">🟠 NEEDS SPONSOR</div>
+            </div>
+            <div class="hs-title">Drain #KS-112</div>
+            <div class="hs-location">📍 Ferozepur Road, Kasur</div>
+            <div class="hs-meta-row"><span>🏠 28 homes</span><span>🏪 3 shops</span></div>
+            <div class="hs-actions">
+              <button class="btn-teal" onclick="goTo('screen-sponsor')">Sponsor — Rs. 2,000/mo</button>
+            </div>
+          </div>
+          <button class="btn-ghost full" onclick="goTo('screen-home')" style="margin:8px 0">Back to Home</button>
+          <div class="spacer-nav"></div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════ -->
+      <!-- SCREEN: WORKER DASHBOARD           -->
+      <!-- ═══════════════════════════════════ -->
+      <div class="screen" id="screen-worker">
+        <div class="screen-scroll">
+          <div class="home-header worker-header">
+            <div class="home-header-top">
+              <div>
+                <div class="greeting light">My Maintenance Jobs</div>
+                <div class="greeting-sub light">Ali Hassan • Kasur</div>
+              </div>
+              <div class="avatar orange-av">A</div>
+            </div>
+          </div>
+
+          <div class="worker-stats-row">
+            <div class="ws-stat"><div class="ws-num">8</div><div class="ws-lbl">Jobs Done</div></div>
+            <div class="ws-stat"><div class="ws-num">Rs. 12k</div><div class="ws-lbl">Earned</div></div>
+            <div class="ws-stat"><div class="ws-num">4.9⭐</div><div class="ws-lbl">Rating</div></div>
+          </div>
+
+          <div class="section-label">Assigned Jobs</div>
+          <div class="job-card" id="jobCard">
+            <div class="job-header">
+              <div class="job-badge">Drain #KS-104</div>
+              <div class="job-status-pill assigned">Assigned</div>
+            </div>
+            <div class="job-location">📍 Kot Ghulam Muhammad, Kasur</div>
+            <div class="job-task">🧹 Task: Clean blocked drain (plastic + garbage)</div>
+            <div class="job-pay">💰 Payment: <strong>Rs. 1,500</strong></div>
+            <div class="job-deadline">📅 Complete by: 28 Sep 2026</div>
+            <button class="btn-primary full" onclick="startJob()" style="margin-top:12px">Start Job</button>
+          </div>
+
+          <!-- Upload Flow (hidden initially) -->
+          <div class="upload-flow" id="uploadFlow" style="display:none">
+            <div class="upload-step" id="uploadBefore">
+              <div class="up-title">Upload Before Photo</div>
+              <div class="photo-upload small" onclick="advanceWorker('before')">
+                <div class="photo-upload-inner">
+                  <div class="pu-icon">📷</div>
+                  <div class="pu-text">Take photo of current state</div>
+                </div>
+              </div>
+            </div>
+            <div class="upload-step hidden" id="uploadAfter">
+              <div class="up-title">Upload After Photo</div>
+              <div class="photo-upload small" onclick="advanceWorker('after')">
+                <div class="photo-upload-inner green-upload">
+                  <div class="pu-icon">✅</div>
+                  <div class="pu-text">Take photo after cleaning</div>
+                </div>
+              </div>
+            </div>
+            <div class="upload-step hidden" id="markDone">
+              <button class="btn-teal full" onclick="goTo('screen-worker-success')">Mark Maintenance Complete</button>
+            </div>
+          </div>
+
+          <div class="section-label">Completed Jobs</div>
+          <div class="job-card completed">
+            <div class="job-header">
+              <div class="job-badge">Drain #KS-091</div>
+              <div class="job-status-pill done">✓ Safai Mukammal</div>
+            </div>
+            <div class="job-location">📍 Model Town, Kasur</div>
+            <div class="job-pay">💰 Rs. 1,500 — Paid</div>
+          </div>
+          <div class="spacer-nav"></div>
+        </div>
+      </div>
+
+      <!-- WORKER SUCCESS -->
+      <div class="screen" id="screen-worker-success">
+        <div class="success-screen">
+          <div class="success-icon-wrap">
+            <div class="success-circle green-circle">✓</div>
+          </div>
+          <h2 class="success-title">Maintenance Verified ✓</h2>
+          <p class="success-sub urdu-big">Safai Mukammal! شکریہ</p>
+          <div class="report-id-card green-card">
+            <div class="rid-label">Job Completed</div>
+            <div class="rid-value">Drain #KS-104</div>
+            <div class="rid-area">Kot Ghulam Muhammad, Kasur</div>
+            <div class="rid-time">26 September 2026 • Verified</div>
+            <div style="margin-top:8px;font-weight:700;color:var(--green);font-size:1.1rem">Rs. 1,500 — Demo Payment Released</div>
+          </div>
+          <button class="btn-primary full" onclick="goTo('screen-worker')" style="margin-top:16px">Back to Jobs</button>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════ -->
+      <!-- SCREEN: FLOOD-FREE SCORE           -->
+      <!-- ═══════════════════════════════════ -->
+      <div class="screen" id="screen-score">
+        <div class="screen-scroll">
+          <div class="score-header">
+            <button class="back-btn light" onclick="goBack()">←</button>
+            <div class="score-header-title">🏆 Kasur Street Resilience</div>
+          </div>
+          <div style="padding: 10px 16px 0;">
+            <div class="demo-badge">DEMO MODE • Illustrative prototype data</div>
+          </div>
+          <div class="score-explain">
+            "Neighbourhoods earn points for maintaining flood hotspots and keeping streets clear after rainfall."
+          </div>
+
+          <div class="section-label">Kasur Leaderboard</div>
+          <div class="leaderboard">
+            <div class="lb-item">
+              <div class="lb-rank gold">🥇</div>
+              <div class="lb-info">
+                <div class="lb-name">Model Town</div>
+                <div class="lb-bar-wrap"><div class="lb-bar" style="width:94%"></div></div>
+              </div>
+              <div class="lb-score">94</div>
+            </div>
+            <div class="lb-item highlight">
+              <div class="lb-rank silver">🥈</div>
+              <div class="lb-info">
+                <div class="lb-name">Kot Ghulam Muhammad <span class="you-tag">You</span></div>
+                <div class="lb-bar-wrap"><div class="lb-bar teal-bar" style="width:89%"></div></div>
+              </div>
+              <div class="lb-score">89</div>
+            </div>
+            <div class="lb-item">
+              <div class="lb-rank bronze">🥉</div>
+              <div class="lb-info">
+                <div class="lb-name">Railway Colony</div>
+                <div class="lb-bar-wrap"><div class="lb-bar" style="width:84%"></div></div>
+              </div>
+              <div class="lb-score">84</div>
+            </div>
+            <div class="lb-item">
+              <div class="lb-rank">4</div>
+              <div class="lb-info">
+                <div class="lb-name">Ferozepur Road Area</div>
+                <div class="lb-bar-wrap"><div class="lb-bar gray-bar" style="width:78%"></div></div>
+              </div>
+              <div class="lb-score">78</div>
+            </div>
+            <div class="lb-item">
+              <div class="lb-rank">5</div>
+              <div class="lb-info">
+                <div class="lb-name">Chungi Amar Sidhu</div>
+                <div class="lb-bar-wrap"><div class="lb-bar gray-bar" style="width:71%"></div></div>
+              </div>
+              <div class="lb-score">71</div>
+            </div>
+          </div>
+
+          <!-- Your Area Score -->
+          <div class="your-score-card">
+            <div class="ys-title">Your Area</div>
+            <div class="ys-area">Kot Ghulam Muhammad</div>
+            <div class="ys-score-row">
+              <div class="ys-big-score">89</div>
+              <div class="ys-out">/100</div>
+              <div class="ys-trend">↑ +3 this week</div>
+            </div>
+            <div class="ys-bar-outer"><div class="ys-bar-fill" style="width:89%"></div></div>
+
+            <div class="breakdown-label">Score Breakdown</div>
+            <div class="breakdown-item">
+              <span>🧹 Drain Maintenance</span>
+              <div class="bd-bar-wrap"><div class="bd-bar" style="width:95%"></div></div>
+              <span class="bd-pct">95%</span>
+            </div>
+            <div class="breakdown-item">
+              <span>⚡ Response Time</span>
+              <div class="bd-bar-wrap"><div class="bd-bar" style="width:87%"></div></div>
+              <span class="bd-pct">87%</span>
+            </div>
+            <div class="breakdown-item">
+              <span>✅ Resident Verification</span>
+              <div class="bd-bar-wrap"><div class="bd-bar teal-bar" style="width:90%"></div></div>
+              <span class="bd-pct">90%</span>
+            </div>
+            <div class="breakdown-item">
+              <span>🌧️ Post-Rain Clearance</span>
+              <div class="bd-bar-wrap"><div class="bd-bar orange-bar" style="width:84%"></div></div>
+              <span class="bd-pct">84%</span>
+            </div>
+          </div>
+
+          <button class="btn-primary full" onclick="goTo('screen-postrain')" style="margin:0 0 12px">Do Post-Rain Verification</button>
+          <div class="spacer-nav"></div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════ -->
+      <!-- SCREEN: POST-RAIN VERIFICATION     -->
+      <!-- ═══════════════════════════════════ -->
+      <div class="screen" id="screen-postrain">
+        <div class="screen-header">
+          <button class="back-btn" onclick="goBack()">←</button>
+          <span class="screen-title">Post-Rain Street Condition</span>
+          <span></span>
+        </div>
+        <div class="screen-scroll pad-top">
+          <div class="postrain-hero">
+            <div class="pr-icon">🌧️</div>
+            <div class="pr-title">Post-Rain Street Condition</div>
+            <div class="pr-sub">Report current street conditions after rain.<br/>Community observations assess local drainage performance rather than guaranteeing flood prevention.</div>
+          </div>
+
+          <div class="pr-question">Observed street condition after rain:</div>
+          <div class="pr-options">
+            <div class="pr-opt green-opt" onclick="selectPR('clear')">
+              <div class="pr-opt-icon">🟢</div>
+              <div class="pr-opt-text">Street Clear of Water</div>
+              <div class="pr-opt-sub">Water drained within 2 hours</div>
+            </div>
+            <div class="pr-opt orange-opt" onclick="selectPR('partial')">
+              <div class="pr-opt-icon">🟠</div>
+              <div class="pr-opt-text">Water Still Present</div>
+              <div class="pr-opt-sub">Some water remaining in street</div>
+            </div>
+            <div class="pr-opt red-opt" onclick="selectPR('severe')">
+              <div class="pr-opt-icon">🔴</div>
+              <div class="pr-opt-text">Severe Waterlogging</div>
+              <div class="pr-opt-sub">Waterlogging / difficult to pass</div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-label">Upload Photo (Optional)</div>
+            <div class="photo-upload" onclick="showPhotoFeedback()">
+              <div class="photo-upload-inner">
+                <div class="pu-icon">📷</div>
+                <div class="pu-text">Tap to capture street condition</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="location-box">
+            <button class="btn-location">📍 Use Current Location</button>
+            <div class="loc-info">Kot Ghulam Muhammad, Kasur • 26 Sep 2026 • 1:36 PM</div>
+          </div>
+
+          <button class="btn-primary full" onclick="goTo('screen-postrain-success')" style="margin:16px 0">Submit Verification</button>
+          <div class="spacer-nav"></div>
+        </div>
+      </div>
+
+      <!-- POST-RAIN SUCCESS -->
+      <div class="screen" id="screen-postrain-success">
+        <div class="success-screen">
+          <div class="success-icon-wrap">
+            <div class="success-circle teal-circle">✓</div>
+          </div>
+          <h2 class="success-title">Street Condition Recorded</h2>
+          <p class="success-sub">Thank you. Your feedback records post-rain street conditions to support local maintenance priorities.</p>
+          <div class="pr-impact-card">
+            <div class="pr-imp-icon">📊</div>
+            <div class="pr-imp-text">Your input contributes to the <strong>Post-Rain Street Condition</strong> tracking for Kot Ghulam Muhammad.</div>
+            <div class="pr-imp-score">Illustrative Score: <strong>84%</strong> → updating…</div>
+          </div>
+          <button class="btn-primary full" onclick="goTo('screen-home')" style="margin-top:20px">Back to Home</button>
+          <button class="btn-ghost full mt-8" onclick="goTo('screen-score')">View Street Score</button>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════ -->
+      <!-- SCREEN: QR SCANNER                 -->
+      <!-- ═══════════════════════════════════ -->
+      <div class="screen" id="screen-qr">
+        <div class="qr-screen">
+          <div class="qr-screen-header">
+            <button class="back-btn light" onclick="goBack()">←</button>
+            <span class="qr-screen-title">Scan a Flood Hotspot</span>
+            <span class="qr-torch">🔦</span>
+          </div>
+          <div class="qr-viewfinder">
+            <div class="qr-frame">
+              <div class="qr-corner-bracket tl"></div>
+              <div class="qr-corner-bracket tr"></div>
+              <div class="qr-corner-bracket bl"></div>
+              <div class="qr-corner-bracket br"></div>
+              <div class="qr-scan-line"></div>
+            </div>
+            <div class="qr-hint-text">Point camera at the QR code on the drain sign</div>
+          </div>
+          <div class="qr-result-card" onclick="goTo('screen-hotspot')">
+            <div class="qr-res-header">
+              <div class="qr-res-icon">📍</div>
+              <div>
+                <div class="qr-res-title">Drain #KS-104</div>
+                <div class="qr-res-loc">Kot Ghulam Muhammad, Kasur</div>
+              </div>
+              <div class="qr-res-status green-badge">🟢 Clear</div>
+            </div>
+            <div class="qr-res-details">
+              <div class="qr-detail">🧹 Last maintenance: 12 September 2026</div>
+              <div class="qr-detail">💚 Sponsored by: <strong>ABC General Store</strong></div>
+              <div class="qr-detail">🏠 42 homes • 🏪 7 shops nearby</div>
+            </div>
+            <div class="qr-res-actions">
+              <button class="btn-danger-sm" onclick="event.stopPropagation();goTo('screen-report')">Report New Issue</button>
+              <button class="btn-secondary-sm" onclick="event.stopPropagation()">Maintenance History</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════ -->
+      <!-- SCREEN: PROFILE                    -->
+      <!-- ═══════════════════════════════════ -->
+      <div class="screen" id="screen-profile">
+        <div class="screen-scroll">
+          <div class="profile-header">
+            <div class="profile-avatar-wrap">
+              <div class="profile-avatar">M</div>
+              <div class="profile-verified">✓</div>
+            </div>
+            <div class="profile-name">Muhammad</div>
+            <div class="profile-area">📍 Kasur, Punjab</div>
+            <div class="profile-since">Member since August 2026</div>
+          </div>
+
+          <!-- Badge -->
+          <div class="badge-card">
+            <div class="badge-emoji">🏅</div>
+            <div class="badge-info">
+              <div class="badge-title">Community Protector</div>
+              <div class="badge-sub">Community Contributor</div>
+            </div>
+          </div>
+
+          <!-- Stats -->
+          <div class="profile-stats">
+            <div class="ps-item">
+              <div class="ps-num">12</div>
+              <div class="ps-label">Reports</div>
+            </div>
+            <div class="ps-item">
+              <div class="ps-num">5</div>
+              <div class="ps-label">Verified</div>
+            </div>
+            <div class="ps-item">
+              <div class="ps-num">3</div>
+              <div class="ps-label">Supported</div>
+            </div>
+            <div class="ps-item">
+              <div class="ps-num">89</div>
+              <div class="ps-label">Area Score</div>
+            </div>
+          </div>
+
+          <!-- Menu -->
+          <div class="profile-menu">
+            <div class="pm-item" onclick="goTo('screen-report')">
+              <span class="pm-icon">📋</span>
+              <span class="pm-label">My Reports</span>
+              <span class="pm-arr">›</span>
+            </div>
+            <div class="pm-item" onclick="goTo('screen-sponsor')">
+              <span class="pm-icon">💚</span>
+              <span class="pm-label">My Sponsored Hotspots</span>
+              <span class="pm-arr">›</span>
+            </div>
+            <div class="pm-item" onclick="goTo('screen-postrain')">
+              <span class="pm-icon">🌧️</span>
+              <span class="pm-label">Post-Rain Verifications</span>
+              <span class="pm-arr">›</span>
+            </div>
+            <div class="pm-divider"></div>
+            <div class="pm-item">
+              <span class="pm-icon">🔔</span>
+              <span class="pm-label">Notifications</span>
+              <span class="pm-badge">3</span>
+              <span class="pm-arr">›</span>
+            </div>
+            <div class="pm-item">
+              <span class="pm-icon">🌐</span>
+              <span class="pm-label">Language / زبان</span>
+              <span class="pm-value">English</span>
+              <span class="pm-arr">›</span>
+            </div>
+            <div class="pm-divider"></div>
+            <div class="pm-item">
+              <span class="pm-icon">❓</span>
+              <span class="pm-label">Help & Support</span>
+              <span class="pm-arr">›</span>
+            </div>
+            <div class="pm-item">
+              <span class="pm-icon">💧</span>
+              <span class="pm-label">About NAYA NAZAM</span>
+              <span class="pm-arr">›</span>
+            </div>
+          </div>
+
+          <div class="app-version">NAYA NAZAM v1.0 • Kasur, Punjab, Pakistan</div>
+          <div class="spacer-nav"></div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════ -->
+      <!-- BOTTOM NAVIGATION                  -->
+      <!-- ═══════════════════════════════════ -->
+      <nav class="bottom-nav" id="bottomNav">
+        <div class="nav-item" id="nav-home" onclick="navTo('screen-home','nav-home')">
+          <div class="nav-icon">🏠</div>
+          <div class="nav-label">Home</div>
+        </div>
+        <div class="nav-item" id="nav-map" onclick="navTo('screen-map','nav-map')">
+          <div class="nav-icon">🗺️</div>
+          <div class="nav-label">Map</div>
+        </div>
+        <div class="nav-item nav-report-btn" id="nav-report" onclick="navTo('screen-report','nav-report')">
+          <div class="nav-report-circle">➕</div>
+          <div class="nav-label" style="color:var(--blue)">Report</div>
+        </div>
+        <div class="nav-item" id="nav-score" onclick="navTo('screen-score','nav-score')">
+          <div class="nav-icon">🏆</div>
+          <div class="nav-label">Score</div>
+        </div>
+        <div class="nav-item" id="nav-profile" onclick="navTo('screen-profile','nav-profile')">
+          <div class="nav-icon">👤</div>
+          <div class="nav-label">Profile</div>
+        </div>
+      </nav>
+
+    </div><!-- /device-screen -->
+  </div><!-- /device-frame -->
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

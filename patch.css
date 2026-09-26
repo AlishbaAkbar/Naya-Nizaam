@@ -1,0 +1,9 @@
+/* ═══════════════════════════════════════════════════
+   KASUR SAAF — Additional Styles (Overflow fix)
+   ═══════════════════════════════════════════════════ */
+
+/* Home screen scroll region compensation */
+#screen-home .screen-scroll { padding-top: 0; }
+
+/* Hotspot Details — fix scroll with header */
+#screen-hotspot .screen-scroll { margin-top: 0; padding-top: 0; }

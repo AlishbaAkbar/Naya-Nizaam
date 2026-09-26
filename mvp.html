@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>NAYA NAZAM — One street. One drain. One better tomorrow.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    /* ─── TOKENS ─── */
+    :root {
+      --blue:   #1B4FD8;
+      --blue-d: #1338A8;
+      --blue-l: #EEF2FF;
+      --teal:   #0D9488;
+      --teal-l: #CCFBF1;
+      --green:  #16A34A;
+      --green-l:#DCFCE7;
+      --orange: #EA580C;
+      --orange-l:#FFF7ED;
+      --red:    #DC2626;
+      --red-l:  #FEF2F2;
+      --g50:  #F9FAFB;
+      --g100: #F3F4F6;
+      --g200: #E5E7EB;
+      --g400: #9CA3AF;
+      --g500: #6B7280;
+      --g700: #374151;
+      --g900: #111827;
+      --r:    16px;
+      --r-sm: 10px;
+      --sh:   0 2px 12px rgba(0,0,0,.08);
+      --sh-md:0 4px 20px rgba(0,0,0,.12);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'Inter',-apple-system,sans-serif;
+      background:#1a1a2e;
+      display:flex;align-items:center;justify-content:center;
+      min-height:100vh;
+    }
+
+    /* ─── DEVICE ─── */
+    .frame{
+      width:390px;height:844px;
+      background:#111;border-radius:55px;padding:12px;
+      box-shadow:0 0 0 2px #333,0 0 0 6px #222,0 40px 80px rgba(0,0,0,.6);
+    }
+    .screen-wrap{
+      width:100%;height:100%;border-radius:44px;
+      overflow:hidden;background:#fff;position:relative;
+    }
+
+    /* ─── STATUS BAR ─── */
+    .sbar{
+      height:44px;display:flex;align-items:center;
+      justify-content:space-between;padding:0 28px;
+      position:absolute;top:0;left:0;right:0;z-index:200;
+      pointer-events:none;
+    }
+    .sbar-time{font-weight:700;font-size:15px}
+    .sbar-icons{display:flex;gap:6px;align-items:center;font-size:13px}
+    .batt{
+      width:25px;height:12px;border:1.5px solid currentColor;
+      border-radius:3px;padding:1.5px;position:relative;display:inline-block;
+    }
+    .batt::after{content:'';position:absolute;right:-4px;top:50%;transform:translateY(-50%);width:2px;height:5px;background:currentColor;border-radius:0 2px 2px 0}
+    .batt-fill{height:100%;width:75%;background:currentColor;border-radius:1px}
+
+    /* ─── SCREENS ─── */
+    .screen{
+      position:absolute;inset:0;background:#fff;
+      display:none;flex-direction:column;overflow:hidden;
+    }
+    .screen.on{display:flex}
+    .scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
+    .scroll::-webkit-scrollbar{display:none}
+    .pt{padding-top:64px}
+
+    /* ─── SCREEN HEADER ─── */
+    .hdr{
+      height:56px;display:flex;align-items:center;
+      justify-content:space-between;padding:0 16px;
+      background:#fff;border-bottom:1px solid var(--g100);
+      position:absolute;top:0;left:0;right:0;z-index:10;
+    }
+    .hdr-title{font-weight:800;font-size:17px;color:var(--g900)}
+    .back{
+      width:36px;height:36px;border:none;background:var(--g100);
+      border-radius:50%;cursor:pointer;font-size:18px;
+      display:flex;align-items:center;justify-content:center;color:var(--g700);
+    }
+    .back.lt{background:rgba(255,255,255,.2);color:#fff}
+
+    /* ─── BOTTOM NAV ─── */
+    .bnav{
+      height:82px;display:flex;align-items:flex-start;
+      justify-content:space-around;padding:8px 8px 0;
+      background:#fff;border-top:1px solid var(--g100);
+      position:absolute;bottom:0;left:0;right:0;z-index:50;
+      box-shadow:0 -4px 20px rgba(0,0,0,.06);
+    }
+    .ni{
+      display:flex;flex-direction:column;align-items:center;
+      gap:2px;cursor:pointer;padding:4px 8px;border-radius:12px;
+      transition:.2s;flex:1;
+    }
+    .ni:hover{background:var(--blue-l)}
+    .ni.act .ni-lbl{color:var(--blue);font-weight:700}
+    .ni-ic{font-size:22px}
+    .ni-lbl{font-size:10px;color:var(--g400);font-weight:500}
+    .ni-rep{position:relative;top:-18px}
+    .rep-circle{
+      width:56px;height:56px;
+      background:linear-gradient(135deg,var(--blue),var(--teal));
+      border-radius:50%;display:flex;align-items:center;
+      justify-content:center;font-size:24px;color:#fff;
+      box-shadow:0 4px 16px rgba(27,79,216,.4);border:3px solid #fff;
+    }
+    .nav-gap{height:90px}
+
+    /* ─── BUTTONS ─── */
+    .btn{
+      width:100%;border:none;border-radius:var(--r);
+      padding:14px 20px;font-size:16px;font-weight:700;
+      cursor:pointer;font-family:inherit;text-align:center;
+      display:block;transition:.2s;
+    }
+    .btn-blue{background:linear-gradient(135deg,var(--blue),var(--blue-d));color:#fff;box-shadow:0 4px 14px rgba(27,79,216,.35)}
+    .btn-teal{background:linear-gradient(135deg,var(--teal),#0B7C72);color:#fff;box-shadow:0 4px 14px rgba(13,148,136,.35)}
+    .btn-red{background:linear-gradient(135deg,var(--red),#b91c1c);color:#fff}
+    .btn-ghost{background:transparent;color:var(--g500);border:1px solid var(--g200)}
+    .btn-sm{border-radius:8px;padding:9px 14px;font-size:13px;width:auto}
+    .btn-blue-l{background:var(--blue-l);color:var(--blue);border-radius:var(--r-sm);padding:10px 16px;font-size:14px;font-weight:600;border:none;cursor:pointer;font-family:inherit}
+    .btn-red-l{background:var(--red-l);color:var(--red);border-radius:var(--r-sm);padding:10px 16px;font-size:14px;font-weight:600;border:none;cursor:pointer;font-family:inherit}
+    .btn-loc{background:var(--blue-l);color:var(--blue);border:none;border-radius:var(--r-sm);padding:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;width:100%}
+    .mt{margin-top:10px}
+
+    /* ─── LABELS ─── */
+    .sec{font-size:13px;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:.5px;margin:18px 0 8px}
+    .pad{padding:0 16px}
+    .card{background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--g100)}
+
+    /* ══════════════════════════════════════════════════
+       SCREEN 1 — ONBOARDING
+    ══════════════════════════════════════════════════ */
+    #s-ob{background:linear-gradient(160deg,var(--blue) 0%,var(--teal) 100%)}
+    .ob-wrap{display:flex;flex-direction:column;height:100%}
+
+    /* Illustration */
+    .ob-illo{flex:1;position:relative;overflow:hidden;min-height:350px}
+    .ob-logo{
+      position:absolute;top:56px;left:20px;
+      display:flex;align-items:center;gap:8px;z-index:5;
+    }
+    .ob-logo-ic{font-size:26px}
+    .ob-logo-txt{font-size:17px;font-weight:900;color:#fff;letter-spacing:-.3px}
+
+    /* Rain */
+    .rain-wrap{position:absolute;top:0;left:0;right:0;height:60%}
+    .rdrop{
+      position:absolute;width:2px;height:14px;
+      background:rgba(255,255,255,.45);border-radius:1px;
+      animation:rfal 1s linear infinite;top:-20px;
+    }
+    @keyframes rfal{0%{transform:translateY(-20px);opacity:0}50%{opacity:1}100%{transform:translateY(240px);opacity:0}}
+
+    /* Street */
+    .street{
+      position:absolute;bottom:0;left:0;right:0;height:56%;
+      display:flex;align-items:flex-end;padding:0 6px;
+    }
+    .blg{
+      background:rgba(255,255,255,.14);border-radius:6px 6px 0 0;
+      margin:0 3px;position:relative;padding:6px;
+      display:flex;flex-direction:column;align-items:center;gap:4px;
+      border:1px solid rgba(255,255,255,.18);
+    }
+    .bw{width:16px;height:13px;background:rgba(255,230,100,.7);border-radius:2px}
+    .bsign{font-size:7px;color:rgba(255,255,255,.8);text-align:center;font-weight:600}
+    .road{
+      flex:1;height:36px;background:rgba(0,0,0,.2);
+      display:flex;align-items:center;justify-content:space-around;margin:0 4px;
+    }
+    .wp{
+      position:absolute;bottom:28px;left:50%;transform:translateX(-50%);
+      width:80px;height:10px;background:rgba(100,200,255,.5);border-radius:50%;
+      animation:wpul 2.5s ease-in-out infinite;
+    }
+    @keyframes wpul{0%,100%{transform:translateX(-50%) scaleX(1)}50%{transform:translateX(-50%) scaleX(1.2)}}
+
+    /* Content bubble */
+    .ob-content{background:#fff;padding:26px 22px 22px}
+    .ob-hl{font-size:26px;font-weight:900;color:var(--g900);line-height:1.15;letter-spacing:-.5px;margin-bottom:6px}
+    .ob-sub{font-size:14px;color:var(--g500);line-height:1.5;margin-bottom:14px}
+    .dots{display:flex;gap:6px;margin-bottom:14px}
+    .dot{width:8px;height:8px;border-radius:4px;background:var(--g200);transition:.3s}
+    .dot.a{width:24px;background:var(--blue)}
+
+    /* ── OB2: Three Steps ── */
+    #s-ob2{background:var(--g50)}
+    .ob2-logo{position:absolute;top:56px;left:20px;display:flex;align-items:center;gap:8px}
+    .ob2-logo-txt{font-size:17px;font-weight:900;color:var(--blue)}
+    .steps-wrap{display:flex;flex-direction:column;height:100%}
+    .steps-illo{
+      flex:1;display:flex;align-items:center;justify-content:center;
+      flex-direction:column;gap:12px;padding:80px 20px 20px;
+    }
+    .steps-row{display:flex;align-items:center;gap:8px}
+    .sc{
+      flex:1;background:#fff;border-radius:14px;padding:16px 8px;
+      text-align:center;box-shadow:var(--sh-md);
+    }
+    .sc-ic{font-size:30px;margin-bottom:5px}
+    .sc-lbl{font-size:12px;font-weight:700;color:var(--g700)}
+    .sc-act{font-size:10px;color:var(--g500);margin-top:2px}
+    .sarr{font-size:20px;color:var(--g300)}
+    .steps-quote{
+      text-align:center;font-size:13px;color:var(--g500);
+      font-style:italic;padding:0 24px;line-height:1.5;margin-top:4px;
+    }
+
+    /* ── OB3: CTA ── */
+    #s-ob3{background:linear-gradient(160deg,var(--teal) 0%,var(--blue) 100%)}
+    .ob3-wrap{display:flex;flex-direction:column;height:100%}
+    .ob3-visual{
+      flex:1;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;
+      padding-top:70px;gap:12px;
+    }
+    .ob3-big-ic{font-size:72px}
+    .ob3-name{font-size:32px;font-weight:900;color:#fff;letter-spacing:-1px}
+    .ob3-tagline{font-size:13px;color:rgba(255,255,255,.75);text-align:center;padding:0 30px;line-height:1.5}
+    .ob3-urdu{font-size:16px;color:rgba(255,255,255,.85);font-style:italic;text-align:center;margin-top:6px}
+    .ob3-content{background:#fff;padding:26px 22px 22px}
+    .btn-outline{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.5);border-radius:var(--r);padding:13px 20px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;width:100%;text-align:center;margin-top:10px;display:block}
+
+    /* ══════════════════════════════════════════════════
+       SCREEN 2 — HOME
+    ══════════════════════════════════════════════════ */
+    .home-hdr{
+      background:linear-gradient(135deg,var(--blue) 0%,var(--blue-d) 100%);
+      padding:56px 20px 22px;color:#fff;
+    }
+    .home-hdr-row{display:flex;align-items:center;justify-content:space-between}
+    .greet{font-size:20px;font-weight:800;color:#fff}
+    .greet-sub{font-size:13px;color:rgba(255,255,255,.7);margin-top:2px}
+    .av{
+      width:40px;height:40px;border-radius:50%;
+      background:rgba(255,255,255,.22);border:2px solid rgba(255,255,255,.4);
+      display:flex;align-items:center;justify-content:center;
+      font-size:16px;font-weight:900;color:#fff;cursor:pointer;
+    }
+
+    /* Rain Alert */
+    .alert-bar{
+      background:linear-gradient(135deg,#FFF7ED,#FFEDD5);
+      border:1.5px solid #FED7AA;border-radius:var(--r);
+      padding:12px 14px;display:flex;align-items:center;gap:10px;
+      margin:12px 0 0;
+    }
+    .ab-ic{font-size:22px}
+    .ab-txt strong{font-size:13px;color:#C2410C;font-weight:700;display:block}
+    .ab-txt span{font-size:11px;color:#9A3412}
+
+    /* Map Card */
+    .map-card{
+      background:#fff;border-radius:var(--r);box-shadow:var(--sh-md);
+      overflow:hidden;cursor:pointer;border:1px solid var(--g100);
+      transition:.2s;margin-bottom:4px;
+    }
+    .map-card:hover{transform:translateY(-2px)}
+    .map-vis{height:175px;position:relative}
+    .mvp-leaflet-map{width:100%;height:100%;background:#E8F4E8}
+    .leaflet-container{font-family:inherit}
+    .prototype-marker-icon.leaflet-div-icon{background:transparent;border:0}
+    .prototype-marker{
+      display:flex;align-items:center;gap:5px;
+      width:150px;height:40px;white-space:nowrap;
+    }
+    .preview-marker-icon .prototype-marker{
+      width:16px;height:16px;justify-content:center;
+    }
+    .marker-label-left .prototype-marker{flex-direction:row-reverse;justify-content:flex-end}
+    .prototype-marker-dot{
+      width:15px;height:15px;flex:0 0 15px;border:2px solid white;
+      border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.45)
+    }
+    .prototype-marker-dot.red{background:var(--red)}
+    .prototype-marker-dot.orange{background:var(--orange)}
+    .prototype-marker-dot.green{background:var(--green)}
+    .prototype-marker-label{
+      display:flex;flex-direction:column;gap:1px;padding:3px 6px;
+      border-radius:5px;color:var(--g900);background:rgba(255,255,255,.96);
+      box-shadow:0 1px 4px rgba(0,0,0,.25);line-height:1.1
+    }
+    .prototype-marker-label strong{font-size:9px;font-weight:800}
+    .prototype-marker-label small{font-size:8px;font-weight:600}
+    .preview-marker-icon .prototype-marker-dot{width:14px;height:14px;flex-basis:14px}
+    .preview-marker-icon .prototype-marker-label{display:none}
+    .marker-label-left .prototype-marker-label{align-items:flex-end}
+    .map-load-error{
+      display:flex;align-items:center;justify-content:center;
+      padding:16px;color:var(--g700);font-size:12px;text-align:center
+    }
+    .map-leg{
+      position:absolute;bottom:18px;left:8px;z-index:500;
+      background:rgba(255,255,255,.95);border-radius:8px;
+      padding:5px 10px;display:flex;gap:10px;box-shadow:var(--sh);pointer-events:none;
+    }
+    .map-vis .map-leg{top:46px;right:8px;bottom:auto;left:auto}
+    .mli{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--g700)}
+    .mld{width:8px;height:8px;border-radius:50%}
+    .map-hint{padding:8px 14px;font-size:11px;line-height:1.4;color:var(--g500);font-weight:600;text-align:left;border-top:1px solid var(--g100)}
+    .map-screen-header{
+      position:absolute;top:44px;left:0;right:0;height:56px;z-index:10;
+      display:flex;align-items:center;justify-content:space-between;padding:0 16px;
+      background:#fff;border-bottom:1px solid var(--g100)
+    }
+    .map-screen-area{position:absolute;top:100px;left:0;right:0;bottom:285px;z-index:1}
+    .map-screen-sheet{
+      position:absolute;left:0;right:0;bottom:82px;height:203px;z-index:2;
+      padding:10px 16px 0;background:#fff;border-radius:20px 20px 0 0;
+      box-shadow:0 -4px 20px rgba(0,0,0,.1)
+    }
+    .map-sheet-handle{width:40px;height:4px;background:var(--g200);border-radius:2px;margin:0 auto 8px}
+    .map-screen-disclaimer{font-size:10px;line-height:1.3;color:var(--g500);margin-bottom:6px}
+    .map-screen-stats{display:flex;gap:12px;margin-bottom:4px}
+    .map-screen-stats .mli{font-size:11px}
+    .map-screen-hotspots{display:flex;flex-direction:column;overflow-y:auto;max-height:105px}
+    .map-screen-hotspot{
+      display:flex;align-items:center;gap:8px;padding:7px 2px;
+      border-bottom:1px solid var(--g100);cursor:pointer
+    }
+    .map-screen-hotspot-name{font-size:11px;font-weight:700;color:var(--g900)}
+    .map-screen-hotspot-sub{font-size:10px;color:var(--g500);margin-top:1px}
+
+    /* Area Card */
+    .area-card{
+      background:var(--blue-l);border-radius:var(--r);
+      padding:13px 16px;display:flex;align-items:center;
+      justify-content:space-between;margin-bottom:10px;border:1.5px solid #C7D7FD;
+    }
+    .area-name{font-size:16px;font-weight:800;color:var(--blue-d)}
+    .area-sub{font-size:12px;color:var(--blue);margin-top:2px}
+    .area-pill{
+      background:var(--blue);color:#fff;border-radius:20px;
+      padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;
+    }
+
+    /* Hotspot Card */
+    .hs-card{
+      background:#fff;border-radius:var(--r);box-shadow:var(--sh);
+      padding:15px;margin-bottom:12px;border:1px solid var(--g100);
+      cursor:pointer;transition:.2s;
+    }
+    .hs-card.risk{border-left:4px solid var(--red)}
+    .hs-card.attn{border-left:4px solid var(--orange)}
+    .hs-card:hover{transform:translateY(-1px);box-shadow:var(--sh-md)}
+    .hs-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+    .rbadge{
+      display:inline-flex;align-items:center;gap:4px;
+      padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;
+    }
+    .rb-r{background:var(--red-l);color:var(--red)}
+    .rb-o{background:var(--orange-l);color:var(--orange)}
+    .rb-g{background:var(--green-l);color:var(--green)}
+    .hs-ago{font-size:11px;color:var(--g400)}
+    .hs-name{font-size:18px;font-weight:900;color:var(--g900);margin-bottom:3px}
+    .hs-loc{font-size:12px;color:var(--g500);margin-bottom:10px}
+    .hs-meta{display:flex;gap:12px;font-size:11px;color:var(--g500);margin-bottom:12px;flex-wrap:wrap}
+    .hs-btns{display:flex;gap:8px}
+
+    /* Quick Actions */
+    .qa-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:16px}
+    .qa{
+      background:#fff;border-radius:var(--r-sm);padding:12px 4px;
+      text-align:center;box-shadow:var(--sh);cursor:pointer;
+      border:1px solid var(--g100);transition:.2s;
+    }
+    .qa:hover{transform:translateY(-2px);background:var(--blue-l)}
+    .qa-ic{font-size:22px;margin-bottom:4px}
+    .qa-lbl{font-size:10px;font-weight:600;color:var(--g500)}
+
+    /* Stats strip */
+    .stats-card{
+      background:linear-gradient(135deg,var(--blue),var(--teal));
+      border-radius:var(--r);padding:16px;color:#fff;margin-bottom:12px;
+    }
+    .stats-title{font-size:13px;font-weight:700;margin-bottom:12px;opacity:.8}
+    .stats-row{display:flex;justify-content:space-around}
+    .st{text-align:center}
+    .st-n{font-size:22px;font-weight:900}
+    .st-l{font-size:10px;opacity:.7;margin-top:2px}
+
+    /* ══════════════════════════════════════════════════
+       SCREEN 3 — REPORT
+    ══════════════════════════════════════════════════ */
+    .rep-intro{
+      background:var(--blue-l);border-radius:var(--r);
+      padding:14px;display:flex;align-items:center;gap:12px;
+      margin-bottom:12px;border:1px solid #C7D7FD;
+    }
+    .ri-ic{font-size:26px}
+    .ri-txt{font-size:13px;color:var(--blue-d);font-weight:500;line-height:1.4}
+
+    .flbl{font-size:13px;font-weight:700;color:var(--g700);margin:14px 0 8px;display:block}
+    .prob-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+    .po{
+      background:var(--g50);border-radius:var(--r-sm);border:2px solid var(--g200);
+      padding:12px;display:flex;align-items:center;gap:8px;
+      font-size:13px;font-weight:600;color:var(--g700);cursor:pointer;transition:.2s;
+    }
+    .po:nth-child(5){grid-column:1/-1}
+    .po span:first-child{font-size:20px}
+    .po.sel{border-color:var(--blue);background:var(--blue-l);color:var(--blue)}
+    .po:not(.sel):hover{border-color:var(--g300);background:var(--g100)}
+
+    .photo-box{
+      background:var(--g50);border:2px dashed var(--g300);
+      border-radius:var(--r);padding:22px;text-align:center;
+      cursor:pointer;transition:.2s;
+    }
+    .photo-box:hover{border-color:var(--blue);background:var(--blue-l)}
+    .pb-ic{font-size:30px;margin-bottom:6px}
+    .pb-txt{font-size:14px;font-weight:600;color:var(--g700)}
+    .pb-sub{font-size:11px;color:var(--g400);margin-top:2px}
+
+    .loc-box{background:var(--g50);border-radius:var(--r);padding:12px;margin-bottom:12px}
+    .loc-map{height:85px;background:#E8F4E8;border-radius:var(--r-sm);position:relative;overflow:hidden;margin-bottom:10px}
+    .lr{position:absolute;background:rgba(255,255,255,.8)}
+    .lr.h{height:6px;left:0;right:0;top:50%}
+    .lr.v{width:6px;top:0;bottom:0;left:40%}
+    .lpin{position:absolute;top:50%;left:40%;transform:translate(-50%,-50%);font-size:22px}
+    .lloc{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);color:#fff;font-size:8px;border-radius:3px;padding:2px 7px;white-space:nowrap;font-weight:600}
+
+    textarea{
+      width:100%;min-height:85px;border:2px solid var(--g200);
+      border-radius:var(--r-sm);padding:12px;font-size:14px;
+      font-family:inherit;color:var(--g900);resize:none;transition:.2s;
+    }
+    textarea:focus{outline:none;border-color:var(--blue)}
+
+    .sev-row{display:flex;gap:8px;margin-bottom:16px}
+    .so{
+      flex:1;background:var(--g50);border:2px solid var(--g200);
+      border-radius:var(--r-sm);padding:10px;text-align:center;
+      font-size:13px;font-weight:600;cursor:pointer;transition:.2s;
+    }
+    .so.sel{border-color:var(--blue);background:var(--blue-l);color:var(--blue)}
+
+    /* ══════════════════════════════════════════════════
+       SUCCESS
+    ══════════════════════════════════════════════════ */
+    .suc-wrap{
+      flex:1;display:flex;flex-direction:column;
+      align-items:center;padding:70px 22px 20px;text-align:center;overflow-y:auto;
+    }
+    .suc-circle{
+      width:80px;height:80px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-size:36px;color:#fff;margin-bottom:20px;
+      box-shadow:0 8px 24px rgba(27,79,216,.3);
+      animation:pop .5s cubic-bezier(.175,.885,.32,1.275);
+    }
+    .sc-blue{background:linear-gradient(135deg,var(--blue),var(--teal))}
+    .sc-teal{background:linear-gradient(135deg,var(--teal),var(--green))}
+    .sc-green{background:linear-gradient(135deg,var(--green),var(--teal))}
+    @keyframes pop{0%{transform:scale(0);opacity:0}100%{transform:scale(1);opacity:1}}
+    .suc-title{font-size:24px;font-weight:900;color:var(--g900);margin-bottom:8px}
+    .suc-sub{font-size:14px;color:var(--g500);line-height:1.5;margin-bottom:20px}
+
+    .rid-card{
+      background:var(--g50);border-radius:var(--r);padding:16px;
+      width:100%;margin-bottom:18px;border:1px solid var(--g200);text-align:left;
+    }
+    .rid-card.g{background:var(--green-l);border-color:#BBF7D0}
+    .rid-lbl{font-size:11px;color:var(--g500);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+    .rid-val{font-size:22px;font-weight:900;color:var(--blue);margin:4px 0}
+    .rid-area{font-size:13px;color:var(--g700);font-weight:600}
+    .rid-sub{font-size:11px;color:var(--g400);margin-top:4px}
+
+    .next-steps{background:var(--g50);border-radius:var(--r);padding:14px;width:100%;margin-bottom:18px;text-align:left}
+    .ns-title{font-size:13px;font-weight:700;color:var(--g700);margin-bottom:10px}
+    .ns-row{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--g500);margin-bottom:7px}
+    .ns-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    .nd-bl{background:var(--blue)}
+    .nd-te{background:var(--teal)}
+    .nd-gr{background:var(--green)}
+    .nd-or{background:var(--orange)}
+
+    /* ══════════════════════════════════════════════════
+       SCREEN 4 — HOTSPOT
+    ══════════════════════════════════════════════════ */
+    .hs-hdr{background:linear-gradient(160deg,var(--red),#9B1C1C);padding:56px 18px 22px;color:#fff}
+    .hs-hdr-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .hs-risk-pill{font-size:12px;font-weight:700;background:rgba(255,255,255,.2);padding:4px 12px;border-radius:20px;letter-spacing:.5px}
+    .hs-share{background:rgba(255,255,255,.2);color:#fff;border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:16px}
+    .hs-big-title{font-size:22px;font-weight:900;margin-bottom:4px}
+    .hs-big-loc{font-size:13px;opacity:.8}
+
+    .hs-stats{display:flex;justify-content:space-around;padding:14px;background:#fff;border-bottom:1px solid var(--g100)}
+    .hss{text-align:center}
+    .hss-ic{font-size:18px;margin-bottom:2px}
+    .hss-val{font-size:18px;font-weight:900;color:var(--g900)}
+    .hss-lbl{font-size:10px;color:var(--g400)}
+
+    .worker-tag{
+      background:var(--teal-l);border-radius:var(--r);padding:13px 14px;
+      display:flex;align-items:center;gap:10px;margin:12px 16px 0;
+      border:1.5px solid #99F6E4;
+    }
+    .wt-av{font-size:26px}
+    .wt-name{font-size:14px;font-weight:700;color:var(--g900)}
+    .wt-sub{font-size:11px;color:var(--g500);margin-top:1px}
+    .wt-ok{font-size:11px;color:var(--teal);font-weight:600;margin-top:3px}
+
+    .ba-row{display:flex;gap:12px;margin:0 16px}
+    .ba{flex:1;border-radius:var(--r-sm);overflow:hidden;box-shadow:var(--sh)}
+    .ba-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:5px 10px}
+    .ba-lbl.bad{background:var(--red-l);color:var(--red)}
+    .ba-lbl.good{background:var(--green-l);color:var(--green)}
+    .ba-img{height:88px;display:flex;align-items:center;justify-content:center}
+    .ba-vis{display:flex;flex-direction:column;align-items:center;width:100%;height:100%}
+    .ba-vis.blk{background:#FEE2E2}
+    .ba-vis.cln{background:#DCFCE7}
+    .ba-dt{font-size:10px;color:var(--g400);padding:4px 10px;background:var(--g50);text-align:center}
+
+    .spon-cta{
+      background:var(--green-l);border-radius:var(--r);padding:15px;
+      margin:12px 16px 0;border:1.5px solid #BBF7D0;
+    }
+    .spon-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+    .spon-ic{font-size:22px}
+    .spon-ttl{font-size:14px;font-weight:800;color:var(--g900)}
+    .spon-sub{font-size:11px;color:var(--g500);margin-top:1px}
+    .spon-price{font-size:14px;font-weight:800;color:var(--green);white-space:nowrap;margin-left:auto}
+    .spon-price small{font-size:10px;font-weight:500}
+    .spon-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+    .chip{background:rgba(22,163,74,.12);color:var(--green);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600}
+
+    .qr-sec{padding:0 16px;margin:12px 0;text-align:center}
+    .qr-ttl{font-size:13px;font-weight:700;color:var(--g700);margin-bottom:10px}
+    .qr-box{
+      display:inline-flex;flex-direction:column;align-items:center;
+      background:var(--g50);border-radius:var(--r);padding:16px;
+      border:2px solid var(--g200);cursor:pointer;gap:8px;
+    }
+    .qr-grid{width:76px;height:76px;position:relative;background:repeating-linear-gradient(0deg,var(--g200) 0,var(--g200) 2px,transparent 2px,transparent 8px),repeating-linear-gradient(90deg,var(--g200) 0,var(--g200) 2px,transparent 2px,transparent 8px)}
+    .qc{position:absolute;width:20px;height:20px;border-style:solid;border-color:var(--g900)}
+    .qc.tl{top:2px;left:2px;border-width:3px 0 0 3px}
+    .qc.tr{top:2px;right:2px;border-width:3px 3px 0 0}
+    .qc.bl{bottom:2px;left:2px;border-width:0 0 3px 3px}
+    .qc.br{bottom:2px;right:2px;border-width:0 3px 3px 0}
+    .qc-inner{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:22px;height:22px;background:var(--blue)}
+    .qr-lbl-sm{font-size:10px;color:var(--g500);font-weight:600}
+
+    /* ══════════════════════════════════════════════════
+       SCREEN 5 — SPONSOR
+    ══════════════════════════════════════════════════ */
+    .sp-hero{text-align:center;padding:18px 0 10px}
+    .sp-hero-ic{font-size:46px;margin-bottom:8px}
+    .sp-hero-ttl{font-size:20px;font-weight:900;color:var(--g900)}
+    .sp-hero-sub{font-size:13px;color:var(--g500);margin-top:4px}
+
+    .sp-ben-card{background:var(--teal-l);border-radius:var(--r);padding:15px;margin-bottom:14px;border:1.5px solid #99F6E4}
+    .sp-ben-ttl{font-size:13px;font-weight:700;color:var(--g700);margin-bottom:10px}
+    .sp-ben-it{font-size:13px;color:var(--g700);padding:3px 0;display:flex;align-items:center;gap:8px}
+    .sp-ben-it::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--teal);flex-shrink:0}
+
+    .amt-row{display:flex;gap:10px;margin-bottom:14px}
+    .ao{
+      flex:1;background:var(--g50);border:2px solid var(--g200);
+      border-radius:var(--r);padding:13px 6px;text-align:center;cursor:pointer;transition:.2s;
+    }
+    .ao.sel{border-color:var(--teal);background:var(--teal-l)}
+    .ao-val{font-size:14px;font-weight:800;color:var(--g900)}
+    .ao-lbl{font-size:10px;font-weight:700;color:var(--g500);margin-top:2px}
+    .ao-sub{font-size:9px;color:var(--g400);margin-top:1px}
+
+    input.ti{
+      width:100%;border:2px solid var(--g200);border-radius:var(--r-sm);
+      padding:12px;font-size:14px;font-family:inherit;
+      color:var(--g900);transition:.2s;margin-bottom:14px;
+    }
+    input.ti:focus{outline:none;border-color:var(--blue)}
+
+    .pay-row{display:flex;gap:10px;margin-bottom:14px}
+    .po-pay{
+      flex:1;background:var(--g50);border:2px solid var(--g200);
+      border-radius:var(--r-sm);padding:11px 6px;text-align:center;cursor:pointer;transition:.2s;
+    }
+    .po-pay.sel{border-color:var(--teal);background:var(--teal-l)}
+    .pay-ico{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;margin:0 auto 4px}
+    .pay-ico.ep{background:#4CAF50;color:#fff}
+    .pay-ico.jc{background:#FF6B35;color:#fff}
+    .pay-ico.cc{background:var(--blue);color:#fff;font-size:16px}
+    .pay-nm{font-size:10px;font-weight:600;color:var(--g700)}
+
+    .sp-sum{display:flex;justify-content:space-between;align-items:center;padding:13px;background:var(--g50);border-radius:var(--r-sm);font-size:14px;color:var(--g700);margin-bottom:12px}
+    .sp-sum strong{color:var(--teal);font-size:16px}
+
+    /* Sponsor Success */
+    .sp-badge{
+      background:linear-gradient(135deg,var(--teal-l),var(--green-l));
+      border-radius:var(--r);padding:18px;border:1.5px solid #99F6E4;
+      width:100%;margin:12px 0;text-align:center;
+    }
+    .spb-ic{font-size:38px;margin-bottom:8px}
+    .spb-ttl{font-size:15px;font-weight:900;color:var(--g900)}
+    .spb-drain{font-size:12px;color:var(--g500);margin-top:4px}
+    .spb-biz{font-size:14px;color:var(--teal-d,#0B7C72);font-weight:600;margin-top:8px}
+    .sp-impact{background:var(--g50);border-radius:var(--r);padding:13px;width:100%;margin-bottom:18px;text-align:left}
+    .sp-imp-ttl{font-size:13px;font-weight:700;color:var(--g700);margin-bottom:10px}
+    .sp-imp-r{font-size:13px;color:var(--g500);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+
+    /* ══════════════════════════════════════════════════
+       QR SCANNER
+    ══════════════════════════════════════════════════ */
+    #s-qr{background:#0a0a0a}
+    .qr-hdr{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:rgba(0,0,0,.8)}
+    .qr-hdr-ttl{font-size:17px;font-weight:700;color:#fff}
+    .qr-torch{font-size:20px;cursor:pointer}
+    .qr-finder{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;position:relative}
+    .qr-finder::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 200px 200px at center,transparent 0%,rgba(0,0,0,.7) 60%)}
+    .qr-frame{width:200px;height:200px;position:relative;z-index:1}
+    .qcb{position:absolute;width:28px;height:28px}
+    .qcb.tl{top:0;left:0;border-top:4px solid #fff;border-left:4px solid #fff;border-radius:4px 0 0 0}
+    .qcb.tr{top:0;right:0;border-top:4px solid #fff;border-right:4px solid #fff;border-radius:0 4px 0 0}
+    .qcb.bl{bottom:0;left:0;border-bottom:4px solid #fff;border-left:4px solid #fff;border-radius:0 0 0 4px}
+    .qcb.br{bottom:0;right:0;border-bottom:4px solid #fff;border-right:4px solid #fff;border-radius:0 0 4px 0}
+    .qr-sl{position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#00ff88,transparent);animation:scan 2s ease-in-out infinite}
+    @keyframes scan{0%{top:0;opacity:0}10%{opacity:1}90%{opacity:1}100%{top:100%;opacity:0}}
+    .qr-hint{color:rgba(255,255,255,.7);font-size:13px;text-align:center;z-index:1}
+    .qr-res{background:#fff;border-radius:20px 20px 0 0;padding:16px 16px 90px;cursor:pointer}
+    .qr-res-hdr{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+    .qr-res-ttl{font-size:16px;font-weight:800;color:var(--g900)}
+    .qr-res-loc{font-size:12px;color:var(--g500)}
+    .green-pill{background:var(--green-l);color:var(--green);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;margin-left:auto}
+    .qr-details{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+    .qr-det{font-size:13px;color:var(--g500)}
+    .qr-acts{display:flex;gap:8px}
+
+    /* ══════════════════════════════════════════════════
+       SCORE SCREEN
+    ══════════════════════════════════════════════════ */
+    .score-hdr{background:linear-gradient(135deg,var(--blue),var(--teal));padding:56px 18px 20px;display:flex;align-items:center;gap:10px;color:#fff}
+    .score-hdr-ttl{font-size:18px;font-weight:800}
+    .score-expl{background:var(--blue-l);border-left:4px solid var(--blue);padding:12px 14px;font-size:13px;color:var(--blue-d);font-style:italic;line-height:1.5;margin:10px 0 0;border-radius:0 var(--r-sm) var(--r-sm) 0}
+
+    .lb{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+    .lbi{
+      display:flex;align-items:center;gap:10px;background:#fff;
+      border-radius:var(--r-sm);padding:12px;box-shadow:var(--sh);border:1px solid var(--g100);
+    }
+    .lbi.hl{background:var(--blue-l);border-color:var(--blue)}
+    .lb-rnk{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0}
+    .lb-inf{flex:1}
+    .lb-nm{font-size:13px;font-weight:700;color:var(--g900);margin-bottom:5px}
+    .lb-bw{height:4px;background:var(--g100);border-radius:2px}
+    .lb-bf{height:4px;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:2px}
+    .lb-bf.t{background:linear-gradient(90deg,var(--teal),var(--green))}
+    .lb-bf.g{background:var(--g300)}
+    .lb-sc{font-size:18px;font-weight:900;color:var(--blue)}
+    .you-tag{font-size:10px;background:var(--blue);color:#fff;border-radius:10px;padding:1px 6px;font-weight:700;margin-left:6px}
+
+    .ys-card{background:#fff;border-radius:var(--r);box-shadow:var(--sh-md);padding:18px;border:1px solid var(--g100);margin-bottom:14px}
+    .ys-lbl{font-size:11px;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:.5px}
+    .ys-area{font-size:17px;font-weight:800;color:var(--g900);margin:4px 0}
+    .ys-row{display:flex;align-items:baseline;gap:4px;margin:8px 0}
+    .ys-big{font-size:54px;font-weight:900;color:var(--blue);line-height:1}
+    .ys-of{font-size:20px;color:var(--g300);font-weight:600}
+    .ys-up{font-size:12px;color:var(--green);font-weight:700;margin-left:8px}
+    .ys-bar-o{height:10px;background:var(--g100);border-radius:5px;margin-bottom:14px}
+    .ys-bar-f{height:10px;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:5px}
+    .bd-lbl{font-size:12px;font-weight:700;color:var(--g500);margin-bottom:10px;text-transform:uppercase;letter-spacing:.3px}
+    .bdi{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:12px;color:var(--g700)}
+    .bdi-bw{flex:1;height:6px;background:var(--g100);border-radius:3px}
+    .bdi-bf{height:6px;border-radius:3px;background:linear-gradient(90deg,var(--blue),var(--teal))}
+    .bdi-bf.t{background:linear-gradient(90deg,var(--teal),var(--green))}
+    .bdi-bf.o{background:linear-gradient(90deg,var(--orange),#FBBF24)}
+    .bdi-pct{font-size:11px;font-weight:700;color:var(--g600,#6B7280);width:32px;text-align:right}
+
+    /* ══════════════════════════════════════════════════
+       POST-RAIN
+    ══════════════════════════════════════════════════ */
+    .pr-hero{text-align:center;padding:14px 0 18px}
+    .pr-ic{font-size:46px;margin-bottom:10px}
+    .pr-ttl{font-size:20px;font-weight:900;color:var(--g900);margin-bottom:6px}
+    .pr-sub{font-size:13px;color:var(--g500);line-height:1.5}
+    .pr-q{font-size:15px;font-weight:700;color:var(--g900);margin-bottom:12px}
+    .pr-opts{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+    .pr-opt{
+      border-radius:var(--r);padding:15px;display:flex;align-items:center;
+      gap:12px;cursor:pointer;border:2px solid transparent;
+      transition:.2s;box-shadow:var(--sh);
+    }
+    .pr-opt:hover{transform:translateX(4px)}
+    .pr-opt.gr{background:var(--green-l);border-color:#BBF7D0}
+    .pr-opt.or{background:var(--orange-l);border-color:#FED7AA}
+    .pr-opt.rd{background:var(--red-l);border-color:#FECACA}
+    .pr-oi{font-size:24px}
+    .pr-ot{font-size:14px;font-weight:700;color:var(--g900)}
+    .pr-os{font-size:11px;color:var(--g500);margin-top:1px}
+
+    .pr-imp{background:var(--blue-l);border-radius:var(--r);padding:15px;border:1.5px solid #C7D7FD;margin:12px 0;text-align:left}
+    .pr-imp-ic{font-size:26px;margin-bottom:8px}
+    .pr-imp-txt{font-size:13px;color:var(--blue-d);line-height:1.5}
+    .pr-imp-sc{font-size:13px;color:var(--blue);margin-top:8px}
+
+    /* ══════════════════════════════════════════════════
+       PROFILE
+    ══════════════════════════════════════════════════ */
+    .prof-hdr{background:linear-gradient(160deg,var(--blue),var(--teal));padding:56px 20px 28px;text-align:center;color:#fff}
+    .prof-av-wrap{position:relative;display:inline-block;margin-bottom:12px}
+    .prof-av{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.22);border:3px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:#fff;margin:0 auto}
+    .prof-vfy{position:absolute;bottom:2px;right:2px;width:20px;height:20px;border-radius:50%;background:var(--green);border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff}
+    .prof-name{font-size:22px;font-weight:900}
+    .prof-area{font-size:13px;opacity:.8;margin-top:2px}
+    .prof-since{font-size:11px;opacity:.6;margin-top:4px}
+
+    .badge-card{background:linear-gradient(135deg,#FEF3C7,#FDE68A);border-radius:var(--r);padding:13px 15px;display:flex;align-items:center;gap:12px;margin:12px 0;border:1.5px solid #FCD34D}
+    .bc-ic{font-size:26px}
+    .bc-ttl{font-size:14px;font-weight:800;color:#92400E}
+    .bc-sub{font-size:11px;color:#B45309;margin-top:2px}
+
+    .prof-stats{display:flex;justify-content:space-around;padding:15px;background:#fff;border-radius:var(--r);box-shadow:var(--sh);margin-bottom:14px}
+    .ps{text-align:center}
+    .ps-n{font-size:24px;font-weight:900;color:var(--blue)}
+    .ps-l{font-size:10px;color:var(--g400);font-weight:500}
+
+    .prof-menu{background:#fff;border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;margin-bottom:14px}
+    .pm{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;transition:.15s;border-bottom:1px solid var(--g50)}
+    .pm:last-child{border-bottom:none}
+    .pm:hover{background:var(--g50)}
+    .pm-ic{font-size:18px;width:24px;text-align:center}
+    .pm-lbl{flex:1;font-size:14px;font-weight:500;color:var(--g900)}
+    .pm-arr{font-size:18px;color:var(--g300)}
+    .pm-badge{background:var(--red);color:#fff;border-radius:10px;padding:1px 7px;font-size:11px;font-weight:700}
+    .pm-val{font-size:13px;color:var(--g400)}
+    .pm-div{height:8px;background:var(--g50)}
+    .app-ver{text-align:center;font-size:11px;color:var(--g300);padding:8px 0 0}
+
+    /* CREDIBILITY & DEMO STYLES */
+    .demo-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;background:rgba(27,79,216,.08);border:1px solid rgba(27,79,216,.25);border-radius:999px;font-size:10px;font-weight:700;color:var(--blue);letter-spacing:.3px;text-transform:uppercase;margin-bottom:6px;width:fit-content}
+    .process-flow-tag{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.5px;color:var(--blue);background:var(--blue-l);padding:4px 10px;border-radius:6px;margin:4px 0 8px;width:fit-content}
+    .sponsorship-demo-note{font-size:11.5px;color:var(--g500);margin:6px 0 12px;font-style:italic;line-height:1.4}
+    .why-kasur-card{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:var(--r);padding:14px;margin-bottom:16px}
+    .why-kasur-intro{font-size:12.5px;font-weight:700;color:var(--g900);line-height:1.45;margin-bottom:10px}
+    .why-kasur-facts{display:flex;flex-direction:column;gap:8px}
+    .why-kasur-fact{font-size:11.5px;color:var(--g700);line-height:1.45}
+    .why-kasur-disclaimer{margin-top:10px;padding-top:8px;border-top:1px dashed #CBD5E1;font-size:10.5px;color:var(--g500);font-style:italic;line-height:1.35}
+
+    /* ANIMATIONS */
+    @keyframes sIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+    @keyframes sOut{from{transform:translateX(0);opacity:1}to{transform:translateX(100%);opacity:0}}
+    @keyframes sInR{from{transform:translateX(-30%);opacity:0}to{transform:translateX(0);opacity:1}}
+  </style>
+</head>
+<body>
+<div class="frame">
+ <div class="screen-wrap">
+
+  <!-- STATUS BAR -->
+  <div class="sbar" id="sbar">
+    <span class="sbar-time" id="clk">9:41</span>
+    <div class="sbar-icons">
+      <span>📶</span>
+      <span>📡</span>
+      <div class="batt"><div class="batt-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       S1A: ONBOARDING 1
+  ════════════════════════════════════ -->
+  <div class="screen on" id="s-ob">
+    <div class="ob-wrap">
+      <div class="ob-illo">
+        <!-- Logo -->
+        <div class="ob-logo">
+          <div class="ob-logo-ic">💧</div>
+          <span class="ob-logo-txt">NAYA NAZAM</span>
+        </div>
+        <!-- Rain -->
+        <div class="rain-wrap">
+          <div class="rdrop" style="left:12%;animation-delay:0s"></div>
+          <div class="rdrop" style="left:28%;animation-delay:.3s"></div>
+          <div class="rdrop" style="left:45%;animation-delay:.1s"></div>
+          <div class="rdrop" style="left:60%;animation-delay:.5s"></div>
+          <div class="rdrop" style="left:75%;animation-delay:.2s"></div>
+          <div class="rdrop" style="left:88%;animation-delay:.7s"></div>
+          <div class="rdrop" style="left:20%;animation-delay:.9s"></div>
+          <div class="rdrop" style="left:52%;animation-delay:.4s"></div>
+        </div>
+        <!-- Street -->
+        <div class="street">
+          <div class="blg" style="height:85px;width:58px"><div class="bw"></div><div class="bw"></div><div class="bsign">آرائیں کپڑا</div></div>
+          <div class="blg" style="height:125px;width:70px"><div class="bw"></div><div class="bw"></div><div class="bw"></div></div>
+          <div class="blg" style="height:75px;width:55px"><div class="bw"></div><div class="bsign">دکان</div></div>
+          <div class="road"><span style="font-size:20px">🛵</span><span style="font-size:18px;animation:pm 2s ease-in-out infinite">🌊</span></div>
+          <div class="blg" style="height:105px;width:62px"><div class="bw"></div><div class="bw"></div></div>
+          <div class="blg" style="height:65px;width:50px"><div class="bw"></div><div class="bsign">جنرل اسٹور</div></div>
+        </div>
+        <div class="wp"></div>
+      </div>
+      <div class="ob-content">
+        <div class="demo-badge">DEMO MODE • Illustrative prototype data</div>
+        <h1 class="ob-hl">One street. One drain.<br/>One better tomorrow.</h1>
+        <div class="process-flow-tag">REPORT → SPONSOR → MAINTAIN → VERIFY</div>
+        <p class="ob-sub">Help identify and maintain flood-prone drains and streets in Kasur, Punjab.</p>
+        <div class="dots"><span class="dot a"></span><span class="dot"></span><span class="dot"></span></div>
+        <button class="btn btn-blue" onclick="go('s-ob2')">Next →</button>
+        <button class="btn btn-ghost mt" onclick="go('s-home')">Skip</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       S1B: ONBOARDING 2
+  ════════════════════════════════════ -->
+  <div class="screen" id="s-ob2" style="background:#F9FAFB">
+    <div class="steps-wrap">
+      <div class="steps-illo">
+        <div class="ob2-logo">
+          <div class="ob-logo-ic">💧</div>
+          <span class="ob2-logo-txt">NAYA NAZAM</span>
+        </div>
+        <div class="steps-row" style="width:100%;padding:0 8px">
+          <div class="sc"><div class="sc-ic">🏠</div><div class="sc-lbl">Resident</div><div class="sc-act">Reports Hotspot</div></div>
+          <div class="sarr">→</div>
+          <div class="sc"><div class="sc-ic">🏪</div><div class="sc-lbl">Business</div><div class="sc-act">Sponsors It</div></div>
+          <div class="sarr">→</div>
+          <div class="sc"><div class="sc-ic">👷</div><div class="sc-lbl">Worker</div><div class="sc-act">Maintains It</div></div>
+        </div>
+        <div class="steps-quote">"Don't just report the problem.<br/>Help maintain the solution."</div>
+      </div>
+      <div class="ob-content" style="background:#fff">
+        <div class="process-flow-tag" style="margin-bottom:4px">REPORT → SPONSOR → MAINTAIN → VERIFY</div>
+        <h1 class="ob-hl" style="color:#111827">Report.<br/>Sponsor.<br/>Maintain.</h1>
+        <p class="ob-sub">A community loop that keeps Kasur's streets flood-resilient — together.</p>
+        <div class="dots"><span class="dot"></span><span class="dot a"></span><span class="dot"></span></div>
+        <button class="btn btn-blue" onclick="go('s-ob3')">Next →</button>
+        <button class="btn btn-ghost mt" onclick="go('s-home')">Skip</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       S1C: ONBOARDING 3
+  ════════════════════════════════════ -->
+  <div class="screen" id="s-ob3" style="background:linear-gradient(160deg,#0D9488 0%,#1B4FD8 100%)">
+    <div class="ob3-wrap">
+      <div class="ob3-visual">
+        <div class="ob3-big-ic">💧</div>
+        <div class="ob3-name">NAYA NAZAM</div>
+        <div class="ob3-tagline">Community-powered flood &amp; drainage maintenance for Kasur, Pakistan</div>
+        <div class="ob3-urdu">ایک گلی، ایک نالی، ایک بہتر کل</div>
+      </div>
+      <div class="ob3-content">
+        <h1 class="ob-hl">NAYA NAZAM,<br/>One Street at<br/>a Time</h1>
+        <p class="ob-sub">NAYA NAZAM — Ek Gali, Ek Drain, Ek Behtar Kal.</p>
+        <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot a"></span></div>
+        <button class="btn btn-blue" onclick="go('s-home')">Get Started</button>
+        <button class="btn-outline" onclick="go('s-sponsor-dash')">Continue as Business</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       S2: HOME
+  ════════════════════════════════════ -->
+  <div class="screen" id="s-home">
+    <div class="scroll">
+      <!-- Header -->
+      <div class="home-hdr">
+        <div class="home-hdr-row">
+          <div>
+            <div class="greet">Assalam-o-Alaikum 👋</div>
+            <div class="greet-sub">Let's keep Kasur safe from waterlogging.</div>
+            <div class="demo-badge" style="margin-top:6px">DEMO MODE • Illustrative prototype data</div>
+          </div>
+          <div class="av" onclick="go('s-profile')">M</div>
+        </div>
+        <!-- Alert -->
+        <div class="alert-bar">
+          <div class="ab-ic">🌧️</div>
+          <div class="ab-txt">
+            <strong>Rain Alert</strong>
+            <span>Heavy rain expected tonight. Check your area hotspots.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pad">
+        <!-- Map -->
+        <div class="sec">Nearby Flood Hotspots</div>
+        <div class="map-card" onclick="go('s-map')">
+          <div class="map-vis">
+            <div class="mvp-leaflet-map" id="mvpHomeMap" role="img" aria-label="Illustrative map of Kasur with prototype hotspots"></div>
+            <div class="map-leg">
+              <div class="mli"><div class="mld" style="background:#16A34A"></div>Clear</div>
+              <div class="mli"><div class="mld" style="background:#EA580C"></div>Attention</div>
+              <div class="mli"><div class="mld" style="background:#DC2626"></div>Risk</div>
+            </div>
+          </div>
+          <div class="map-hint">Prototype Hotspots are illustrative, not officially verified. Tap to open full map →</div>
+        </div>
+
+        <!-- Your Area -->
+        <div class="sec">Your Area — <span style="color:var(--teal);font-weight:600">Meri Gali</span></div>
+        <div class="area-card">
+          <div><div class="area-name">Kot Ghulam Muhammad</div><div class="area-sub">Kasur • 2 hotspots nearby</div></div>
+          <div class="area-pill" onclick="go('s-score')">89 pts →</div>
+        </div>
+
+        <!-- Hotspot Cards -->
+        <div class="hs-card risk" onclick="go('s-hotspot')">
+          <div class="hs-top"><div class="rbadge rb-r">🔴 HIGH RISK</div><div class="hs-ago">6 days ago</div></div>
+          <div class="hs-name">Drain #KS-104</div>
+          <div class="hs-loc">📍 Kot Ghulam Muhammad, Kasur</div>
+          <div class="hs-meta"><span>🏠 42 homes</span><span>🏪 7 shops</span><span>🧹 Needs cleaning</span></div>
+          <div class="hs-btns">
+            <button class="btn-blue-l" onclick="event.stopPropagation();go('s-hotspot')">View Details</button>
+            <button class="btn-red-l" onclick="event.stopPropagation();go('s-report')">Masla Report Karein</button>
+          </div>
+        </div>
+
+        <div class="hs-card attn">
+          <div class="hs-top"><div class="rbadge rb-o">🟠 NEEDS ATTENTION</div><div class="hs-ago">2 days ago</div></div>
+          <div class="hs-name">Drain #KS-112</div>
+          <div class="hs-loc">📍 Ferozepur Road, Kasur</div>
+          <div class="hs-meta"><span>🏠 28 homes</span><span>🏪 3 shops</span></div>
+          <div class="hs-btns">
+            <button class="btn-blue-l" onclick="event.stopPropagation()">View Details</button>
+            <button style="background:var(--orange-l);color:var(--orange);border-radius:var(--r-sm);padding:10px 14px;font-size:13px;font-weight:600;border:none;cursor:pointer" onclick="event.stopPropagation();go('s-report')">Report Issue</button>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="sec">Quick Actions</div>
+        <div class="qa-grid">
+          <div class="qa" onclick="go('s-postrain')"><div class="qa-ic">🌧️</div><div class="qa-lbl">Post-Rain Check</div></div>
+          <div class="qa" onclick="go('s-qr')"><div class="qa-ic">📷</div><div class="qa-lbl">Scan QR</div></div>
+          <div class="qa" onclick="go('s-score')"><div class="qa-ic">🏆</div><div class="qa-lbl">Score</div></div>
+          <div class="qa" onclick="go('s-sponsor')"><div class="qa-ic">💚</div><div class="qa-lbl">Sponsor</div></div>
+        </div>
+
+        <!-- Community Stats -->
+        <div class="stats-card">
+          <div class="stats-title">Kasur Community This Month</div>
+          <div class="stats-row">
+            <div class="st"><div class="st-n">247</div><div class="st-l">Reports Filed</div></div>
+            <div class="st"><div class="st-n">38</div><div class="st-l">Drains Cleaned</div></div>
+            <div class="st"><div class="st-n">12</div><div class="st-l">Businesses Sponsoring</div></div>
+          </div>
+        </div>
+
+        <!-- Why Kasur? -->
+        <div class="sec">Why Kasur?</div>
+        <div class="why-kasur-card">
+          <p class="why-kasur-intro">Naya Nizaam is designed around a local maintenance problem rather than claiming to solve city-wide flooding.</p>
+          <div class="why-kasur-facts">
+            <div class="why-kasur-fact">• NDMA’s 2025 Post-Monsoon Review included Kasur among districts discussed in relation to poor access to clean water and sanitation in some temporary shelters.</div>
+            <div class="why-kasur-fact">• Peer-reviewed research has documented wastewater, drainage and groundwater-contamination challenges in Kasur, particularly around tannery-related industrial activity.</div>
+          </div>
+          <div class="why-kasur-disclaimer">Hotspots, household counts, worker profiles, and scores shown in this prototype are illustrative demonstration data.</div>
+        </div>
+      </div>
+      <div class="nav-gap"></div>
+    </div>
+  </div>
+
+  <!-- KASUR MAP -->
+  <div class="screen" id="s-map">
+    <div class="map-screen-header">
+      <button class="back" onclick="back()">←</button>
+      <span class="hdr-title">Kasur Flood Map</span>
+      <span></span>
+    </div>
+    <div class="map-screen-area">
+      <div class="mvp-leaflet-map" id="mvpKasurMap" role="application" aria-label="Interactive map of Kasur, Punjab, Pakistan"></div>
+    </div>
+    <div class="map-screen-sheet">
+      <div class="map-sheet-handle"></div>
+      <div class="map-screen-disclaimer">Prototype Hotspots are illustrative only; not officially verified flood hotspots.</div>
+      <div class="map-screen-stats">
+        <div class="mli"><div class="mld" style="background:#DC2626"></div>3 High Risk</div>
+        <div class="mli"><div class="mld" style="background:#EA580C"></div>2 Attention</div>
+        <div class="mli"><div class="mld" style="background:#16A34A"></div>4 Clear</div>
+      </div>
+      <div class="map-screen-hotspots">
+        <div class="map-screen-hotspot" onclick="go('s-hotspot')">
+          <span class="mld" style="background:#DC2626"></span>
+          <div><div class="map-screen-hotspot-name">Prototype Hotspot — KS-104</div><div class="map-screen-hotspot-sub">Kot Ghulam Muhammad • High Risk</div></div>
+          <span>›</span>
+        </div>
+        <div class="map-screen-hotspot">
+          <span class="mld" style="background:#EA580C"></span>
+          <div><div class="map-screen-hotspot-name">Prototype Hotspot — KS-112</div><div class="map-screen-hotspot-sub">Ferozepur Road • Attention</div></div>
+          <span>›</span>
+        </div>
+        <div class="map-screen-hotspot">
+          <span class="mld" style="background:#EA580C"></span>
+          <div><div class="map-screen-hotspot-name">Prototype Hotspot — KS-098</div><div class="map-screen-hotspot-sub">Near Bus Stand • Attention</div></div>
+          <span>›</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       S3: REPORT
+  ════════════════════════════════════ -->
+  <div class="screen" id="s-report">
+    <div class="hdr">
+      <button class="back" onclick="back()">←</button>
+      <span class="hdr-title">Masla Report Karein</span>
+      <span></span>
+    </div>
+    <div class="scroll pt pad">
+      <div class="rep-intro">
+        <div class="ri-ic">📋</div>
+        <p class="ri-txt">Help your community by reporting a flood-prone spot in Kasur.</p>
+      </div>
+
+      <span class="flbl">What is the problem?</span>
+      <div class="prob-grid">
+        <div class="po sel" id="p1" onclick="selP('p1')"><span>🚧</span><span>Blocked Drain</span></div>
+        <div class="po" id="p2" onclick="selP('p2')"><span>💧</span><span>Waterlogging</span></div>
+        <div class="po" id="p3" onclick="selP('p3')"><span>🗑️</span><span>Garbage Choke</span></div>
+        <div class="po" id="p4" onclick="selP('p4')"><span>🕳️</span><span>Damaged Drain</span></div>
+        <div class="po" id="p5" onclick="selP('p5')"><span>📌</span><span>Other</span></div>
+      </div>
+
+      <span class="flbl">Take a Photo</span>
+      <div class="photo-box" onclick="photoFB(this)" style="margin-bottom:14px">
+        <div class="pb-ic">📷</div>
+        <div class="pb-txt">Tap to take photo or upload</div>
+        <div class="pb-sub">Photo helps verify the problem</div>
+      </div>
+
+      <span class="flbl">Location</span>
+      <div class="loc-box">
+        <div class="loc-map">
+          <div class="lr h"></div>
+          <div class="lr v"></div>
+          <div class="lpin">📍</div>
+          <div class="lloc">Kot Ghulam Muhammad, Kasur</div>
+        </div>
+        <button class="btn-loc">📍 Use Current Location</button>
+      </div>
+
+      <span class="flbl" style="margin-top:14px">Describe the Problem</span>
+      <textarea placeholder="Example: Drain is blocked with plastic and garbage near the main chowk..." style="margin-bottom:14px"></textarea>
+
+      <span class="flbl">Severity</span>
+      <div class="sev-row">
+        <div class="so" id="sv1" onclick="selSv('sv1')">🟢 Minor</div>
+        <div class="so sel" id="sv2" onclick="selSv('sv2')">🟠 Moderate</div>
+        <div class="so" id="sv3" onclick="selSv('sv3')">🔴 Severe</div>
+      </div>
+
+      <button class="btn btn-blue" onclick="go('s-rep-ok')" style="margin-bottom:16px">Submit Report</button>
+      <div class="nav-gap"></div>
+    </div>
+  </div>
+
+  <!-- S3 SUCCESS -->
+  <div class="screen" id="s-rep-ok">
+    <div class="suc-wrap">
+      <div class="suc-circle sc-blue">✓</div>
+      <h2 class="suc-title">Report Submitted ✓</h2>
+      <p class="suc-sub">Your report has been added to the Kasur flood map.</p>
+      <div class="rid-card">
+        <div class="rid-lbl">Report ID</div>
+        <div class="rid-val">#KS-247</div>
+        <div class="rid-area">Kot Ghulam Muhammad, Kasur</div>
+        <div class="rid-sub">🚧 Blocked Drain • Moderate • 26 Sep 2026</div>
+      </div>
+      <div class="next-steps">
+        <div class="ns-title">What happens next?</div>
+        <div class="ns-row"><span class="ns-dot nd-bl"></span>Report reviewed by the community</div>
+        <div class="ns-row"><span class="ns-dot nd-te"></span>Hotspot registered on the NAYA NAZAM map</div>
+        <div class="ns-row"><span class="ns-dot nd-gr"></span>A business can sponsor maintenance</div>
+        <div class="ns-row"><span class="ns-dot nd-or"></span>A verified worker is assigned</div>
+      </div>
+      <button class="btn btn-blue" onclick="go('s-home')">Back to Home</button>
+      <button class="btn btn-ghost mt" onclick="go('s-hotspot')">View Hotspot</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       S4: HOTSPOT DETAILS
+  ════════════════════════════════════ -->
+  <div class="screen" id="s-hotspot">
+    <div class="hs-hdr">
+      <div class="hs-hdr-row">
+        <button class="back lt" onclick="back()">←</button>
+        <div class="hs-risk-pill">🔴 HIGH RISK</div>
+        <button class="hs-share">↗</button>
+      </div>
+      <div class="hs-big-title">Flood Hotspot #KS-104</div>
+      <div class="hs-big-loc">📍 Kot Ghulam Muhammad, Kasur</div>
+    </div>
+    <div class="scroll">
+      <!-- Stats -->
+      <div class="hs-stats">
+        <div class="hss"><div class="hss-ic">🏠</div><div class="hss-val">42</div><div class="hss-lbl">Homes</div></div>
+        <div class="hss"><div class="hss-ic">🏪</div><div class="hss-val">7</div><div class="hss-lbl">Shops</div></div>
+        <div class="hss"><div class="hss-ic">🧹</div><div class="hss-val">6d</div><div class="hss-lbl">Last Clean</div></div>
+        <div class="hss"><div class="hss-ic">📅</div><div class="hss-val">3d</div><div class="hss-lbl">Next Insp.</div></div>
+      </div>
+
+      <!-- Worker Tag -->
+      <div class="pad">
+        <div class="worker-tag">
+          <div class="wt-av">👷</div>
+          <div><div class="wt-name">Ali Hassan</div><div class="wt-sub">Local Worker • Demo Profile</div><div class="wt-ok">✅ Assigned to this drain</div></div>
+        </div>
+
+        <!-- Before/After -->
+        <div class="sec">Before / After Evidence</div>
+        <div class="ba-row">
+          <div class="ba">
+            <div class="ba-lbl bad">Before</div>
+            <div class="ba-img"><div class="ba-vis blk" style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%"><span style="font-size:28px">🌊</span><span style="font-size:11px;color:var(--red);font-weight:700;margin-top:4px">Blocked</span></div></div>
+            <div class="ba-dt">20 Sep 2026</div>
+          </div>
+          <div class="ba">
+            <div class="ba-lbl good">After</div>
+            <div class="ba-img"><div class="ba-vis cln" style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%"><span style="font-size:28px">✨</span><span style="font-size:11px;color:var(--green);font-weight:700;margin-top:4px">Clean</span></div></div>
+            <div class="ba-dt">22 Sep 2026</div>
+          </div>
+        </div>
+
+        <!-- Sponsor CTA -->
+        <div class="spon-cta" style="margin-top:14px">
+          <div class="spon-top">
+            <div class="spon-ic">💚</div>
+            <div><div class="spon-ttl">Sponsor This Hotspot</div><div class="spon-sub">Help fund regular cleaning & inspections</div></div>
+            <div class="spon-price">Rs. 2,000<small>/mo</small></div>
+          </div>
+          <div class="spon-chips">
+            <span class="chip">✓ Regular cleaning</span>
+            <span class="chip">✓ Inspection</span>
+            <span class="chip">✓ Emergency cleanup</span>
+          </div>
+          <button class="btn btn-teal" onclick="go('s-sponsor')">Sponsor Karein — Sponsor This Drain</button>
+        </div>
+
+        <!-- QR -->
+        <div class="qr-sec" style="margin-top:14px">
+          <div class="qr-ttl">Scan QR at this Hotspot</div>
+          <div class="qr-box" onclick="go('s-qr')">
+            <div class="qr-grid">
+              <div class="qc tl"></div><div class="qc tr"></div>
+              <div class="qc-inner"></div>
+              <div class="qc bl"></div><div class="qc br"></div>
+            </div>
+            <div class="qr-lbl-sm">KS-104 • Kasur</div>
+          </div>
+        </div>
+
+        <button class="btn btn-red" onclick="go('s-report')" style="margin-top:14px;margin-bottom:16px">Report a New Issue</button>
+      </div>
+      <div class="nav-gap"></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       S5: SPONSOR
+  ════════════════════════════════════ -->
+  <div class="screen" id="s-sponsor">
+    <div class="hdr">
+      <button class="back" onclick="back()">←</button>
+      <span class="hdr-title">Sponsor Karein</span>
+      <span></span>
+    </div>
+    <div class="scroll pt pad">
+      <div class="sp-hero">
+        <div class="sp-hero-ic">💧</div>
+        <div class="sp-hero-ttl">Sponsor Drain #KS-104</div>
+        <div class="sp-hero-sub">Kot Ghulam Muhammad, Kasur</div>
+      </div>
+
+      <div class="sp-ben-card">
+        <div class="sp-ben-ttl">Your sponsorship helps pay for:</div>
+        <div class="sp-ben-it">Regular drain cleaning</div>
+        <div class="sp-ben-it">Scheduled inspection visits</div>
+        <div class="sp-ben-it">Emergency post-rain cleanup</div>
+        <div class="sp-ben-it">Before/after photo verification</div>
+        <div class="sp-ben-it">Your business name on the drain badge</div>
+      </div>
+
+      <span class="flbl">Choose Amount</span>
+      <div class="amt-row">
+        <div class="ao" id="a1" onclick="selA('a1')"><div class="ao-val">Rs. 1,000</div><div class="ao-lbl">Basic</div><div class="ao-sub">1x cleaning/mo</div></div>
+        <div class="ao sel" id="a2" onclick="selA('a2')"><div class="ao-val">Rs. 2,000</div><div class="ao-lbl">Standard ⭐</div><div class="ao-sub">2x + inspection</div></div>
+        <div class="ao" id="a3" onclick="selA('a3')"><div class="ao-val">Rs. 3,000</div><div class="ao-lbl">Premium</div><div class="ao-sub">Weekly + emergency</div></div>
+      </div>
+      <div class="sponsorship-demo-note">Prototype sponsorship tiers — payment is simulated in this demo.</div>
+
+      <span class="flbl">Business Name</span>
+      <input class="ti" type="text" placeholder="e.g. ABC General Store, Kasur" value="ABC General Store" />
+
+      <span class="flbl">Payment Method</span>
+      <div class="pay-row">
+        <div class="po-pay sel" id="py1" onclick="selPy('py1')"><div class="pay-ico ep">E</div><div class="pay-nm">Easypaisa</div></div>
+        <div class="po-pay" id="py2" onclick="selPy('py2')"><div class="pay-ico jc">J</div><div class="pay-nm">JazzCash</div></div>
+        <div class="po-pay" id="py3" onclick="selPy('py3')"><div class="pay-ico cc">💳</div><div class="pay-nm">Card</div></div>
+      </div>
+
+      <div class="sp-sum"><span>Monthly sponsorship</span><strong>Rs. 2,000</strong></div>
+      <button class="btn btn-teal" onclick="go('s-spon-ok')">Sponsor Now — Rs. 2,000/month</button>
+      <div class="nav-gap"></div>
+    </div>
+  </div>
+
+  <!-- SPONSOR SUCCESS -->
+  <div class="screen" id="s-spon-ok">
+    <div class="suc-wrap">
+      <div class="suc-circle sc-teal" style="font-size:40px">🎉</div>
+      <h2 class="suc-title">Shukria! Thank You!</h2>
+      <p class="suc-sub">You are now helping keep this Kasur street flood-resilient.</p>
+      <div class="sp-badge">
+        <div class="spb-ic">🏅</div>
+        <div class="spb-ttl">Official Drain Sponsor</div>
+        <div class="spb-drain">Drain #KS-104 • Kot Ghulam Muhammad</div>
+        <div class="spb-biz">Sponsored by <strong>ABC General Store</strong></div>
+      </div>
+      <div class="sp-impact">
+        <div class="sp-imp-ttl">Your monthly impact:</div>
+        <div class="sp-imp-r"><span>🏠</span> 42 nearby homes in the service area</div>
+        <div class="sp-imp-r"><span>🧹</span> 2 cleanings per month</div>
+        <div class="sp-imp-r"><span>📸</span> Photo-verified maintenance</div>
+      </div>
+      <button class="btn btn-blue" onclick="go('s-home')">Back to Home</button>
+      <button class="btn btn-ghost mt" onclick="go('s-hotspot')">View Hotspot</button>
+    </div>
+  </div>
+
+  <!-- SPONSOR DASHBOARD (BIZ) -->
+  <div class="screen" id="s-sponsor-dash">
+    <div class="scroll">
+      <div class="home-hdr" style="background:linear-gradient(135deg,var(--teal),#0B7C72)">
+        <div class="home-hdr-row">
+          <div><div class="greet">Business Dashboard</div><div class="greet-sub">ABC General Store, Kasur</div></div>
+          <div class="av">B</div>
+        </div>
+      </div>
+      <div class="pad">
+        <div class="hs-stats" style="background:var(--teal-l);border-radius:var(--r);margin-top:12px">
+          <div class="hss"><div class="hss-val" style="color:var(--teal)">1</div><div class="hss-lbl">Sponsored</div></div>
+          <div class="hss"><div class="hss-val" style="color:var(--teal)">42</div><div class="hss-lbl">Nearby Homes</div></div>
+          <div class="hss"><div class="hss-val" style="color:var(--teal)">2</div><div class="hss-lbl">Cleanings</div></div>
+        </div>
+        <div class="sec">Sponsored Hotspot</div>
+        <div class="hs-card" style="border-left:4px solid var(--teal)">
+          <div class="hs-top"><div class="rbadge rb-g">🟢 MAINTAINED</div><div class="hs-ago">Active</div></div>
+          <div class="hs-name">Drain #KS-104</div>
+          <div class="hs-loc">📍 Kot Ghulam Muhammad • Rs. 2,000/month</div>
+          <div class="hs-btns"><button class="btn-blue-l" onclick="go('s-hotspot')">View Report</button></div>
+        </div>
+        <button class="btn btn-ghost" onclick="go('s-home')" style="margin-top:8px">Back to Home</button>
+      </div>
+      <div class="nav-gap"></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       S6: QR SCANNER
+  ════════════════════════════════════ -->
+  <div class="screen" id="s-qr">
+    <div class="qr-hdr">
+      <button class="back lt" onclick="back()">←</button>
+      <span class="qr-hdr-ttl">Scan a Flood Hotspot</span>
+      <span class="qr-torch">🔦</span>
+    </div>
+    <div class="qr-finder">
+      <div class="qr-frame">
+        <div class="qcb tl"></div><div class="qcb tr"></div>
+        <div class="qcb bl"></div><div class="qcb br"></div>
+        <div class="qr-sl"></div>
+      </div>
+      <div class="qr-hint">Point camera at the QR code on the drain sign</div>
+    </div>
+    <div class="qr-res" onclick="go('s-hotspot')">
+      <div class="qr-res-hdr">
+        <span style="font-size:22px">📍</span>
+        <div><div class="qr-res-ttl">Drain #KS-104</div><div class="qr-res-loc">Kot Ghulam Muhammad, Kasur</div></div>
+        <div class="green-pill">🟢 Clear</div>
+      </div>
+      <div class="qr-details">
+        <div class="qr-det">🧹 Last maintenance: 12 September 2026</div>
+        <div class="qr-det">💚 Sponsored by: <strong>ABC General Store</strong></div>
+        <div class="qr-det">🏠 42 homes • 🏪 7 shops nearby</div>
+      </div>
+      <div class="qr-acts">
+        <button class="btn-red-l btn-sm" onclick="event.stopPropagation();go('s-report')">Report New Issue</button>
+        <button style="background:var(--g100);color:var(--g700);border-radius:8px;padding:9px 14px;font-size:13px;font-weight:600;border:none;cursor:pointer" onclick="event.stopPropagation()">Maintenance History</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       S7: SCORE
+  ════════════════════════════════════ -->
+  <div class="screen" id="s-score">
+    <div class="scroll">
+      <div class="score-hdr">
+        <button class="back lt" onclick="back()">←</button>
+        <span class="score-hdr-ttl">🏆 Kasur Street Resilience</span>
+      </div>
+      <div class="pad">
+        <div class="demo-badge" style="margin-bottom:8px">DEMO MODE • Illustrative prototype data</div>
+        <div class="score-expl">"Neighbourhoods earn points for maintaining flood hotspots and keeping streets clear after rainfall."</div>
+        <div class="sec">Kasur Leaderboard</div>
+        <div class="lb">
+          <div class="lbi"><div class="lb-rnk">🥇</div><div class="lb-inf"><div class="lb-nm">Model Town</div><div class="lb-bw"><div class="lb-bf" style="width:94%"></div></div></div><div class="lb-sc">94</div></div>
+          <div class="lbi hl"><div class="lb-rnk">🥈</div><div class="lb-inf"><div class="lb-nm">Kot Ghulam Muhammad <span class="you-tag">You</span></div><div class="lb-bw"><div class="lb-bf t" style="width:89%"></div></div></div><div class="lb-sc">89</div></div>
+          <div class="lbi"><div class="lb-rnk">🥉</div><div class="lb-inf"><div class="lb-nm">Railway Colony</div><div class="lb-bw"><div class="lb-bf" style="width:84%"></div></div></div><div class="lb-sc">84</div></div>
+          <div class="lbi"><div class="lb-rnk" style="font-size:13px;font-weight:800;color:var(--g500)">4</div><div class="lb-inf"><div class="lb-nm">Ferozepur Road Area</div><div class="lb-bw"><div class="lb-bf g" style="width:78%"></div></div></div><div class="lb-sc" style="color:var(--g400)">78</div></div>
+          <div class="lbi"><div class="lb-rnk" style="font-size:13px;font-weight:800;color:var(--g500)">5</div><div class="lb-inf"><div class="lb-nm">Chungi Amar Sidhu</div><div class="lb-bw"><div class="lb-bf g" style="width:71%"></div></div></div><div class="lb-sc" style="color:var(--g400)">71</div></div>
+        </div>
+        <div class="sec">Your Area Score</div>
+        <div class="ys-card">
+          <div class="ys-lbl">Your Area</div>
+          <div class="ys-area">Kot Ghulam Muhammad</div>
+          <div class="ys-row"><div class="ys-big">89</div><div class="ys-of">/100</div><div class="ys-up">↑ +3 this week</div></div>
+          <div class="ys-bar-o"><div class="ys-bar-f" style="width:89%"></div></div>
+          <div class="bd-lbl">Score Breakdown</div>
+          <div class="bdi"><span>🧹 Drain Maintenance</span><div class="bdi-bw"><div class="bdi-bf" style="width:95%"></div></div><span class="bdi-pct">95%</span></div>
+          <div class="bdi"><span>⚡ Response Time</span><div class="bdi-bw"><div class="bdi-bf" style="width:87%"></div></div><span class="bdi-pct">87%</span></div>
+          <div class="bdi"><span>✅ Resident Verification</span><div class="bdi-bw"><div class="bdi-bf t" style="width:90%"></div></div><span class="bdi-pct">90%</span></div>
+          <div class="bdi"><span>🌧️ Post-Rain Clearance</span><div class="bdi-bw"><div class="bdi-bf o" style="width:84%"></div></div><span class="bdi-pct">84%</span></div>
+        </div>
+        <button class="btn btn-blue" onclick="go('s-postrain')" style="margin-bottom:14px">Do Post-Rain Verification</button>
+      </div>
+      <div class="nav-gap"></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       S8: POST-RAIN
+  ════════════════════════════════════ -->
+  <div class="screen" id="s-postrain">
+    <div class="hdr">
+      <button class="back" onclick="back()">←</button>
+      <span class="hdr-title">Post-Rain Street Condition</span>
+      <span></span>
+    </div>
+    <div class="scroll pt pad">
+      <div class="pr-hero">
+        <div class="pr-ic">🌧️</div>
+        <div class="pr-ttl">Post-Rain Street Condition</div>
+        <div class="pr-sub">Report current street conditions after rain.<br/>Community observations assess local drainage performance rather than guaranteeing flood prevention.</div>
+      </div>
+      <div class="pr-q">Observed street condition after rain:</div>
+      <div class="pr-opts">
+        <div class="pr-opt gr" onclick="selPR(this)"><div class="pr-oi">🟢</div><div><div class="pr-ot">Street Clear of Water</div><div class="pr-os">Water drained within 2 hours</div></div></div>
+        <div class="pr-opt or" onclick="selPR(this)"><div class="pr-oi">🟠</div><div><div class="pr-ot">Water Still Present</div><div class="pr-os">Some water remaining in street</div></div></div>
+        <div class="pr-opt rd" onclick="selPR(this)"><div class="pr-oi">🔴</div><div><div class="pr-ot">Severe Waterlogging</div><div class="pr-os">Waterlogging / difficult to pass</div></div></div>
+      </div>
+      <span class="flbl">Upload Photo (Optional)</span>
+      <div class="photo-box" onclick="photoFB(this)" style="margin-bottom:12px">
+        <div class="pb-ic">📷</div><div class="pb-txt">Capture street condition</div>
+      </div>
+      <button class="btn-loc" style="margin-bottom:14px">📍 Use Current Location — Kot Ghulam Muhammad, Kasur</button>
+      <button class="btn btn-blue" onclick="go('s-pr-ok')" style="margin-bottom:16px">Submit Verification</button>
+      <div class="nav-gap"></div>
+    </div>
+  </div>
+
+  <!-- POST-RAIN SUCCESS -->
+  <div class="screen" id="s-pr-ok">
+    <div class="suc-wrap">
+      <div class="suc-circle sc-teal">✓</div>
+      <h2 class="suc-title">Street Condition Recorded</h2>
+      <p class="suc-sub">Thank you. Your feedback records post-rain street conditions to support local maintenance priorities.</p>
+      <div class="pr-imp">
+        <div class="pr-imp-ic">📊</div>
+        <div class="pr-imp-txt">Your input contributes to the <strong>Post-Rain Street Condition</strong> tracking for Kot Ghulam Muhammad.</div>
+        <div class="pr-imp-sc">Illustrative Score: <strong>84%</strong> → updating…</div>
+      </div>
+      <button class="btn btn-blue" onclick="go('s-home')" style="margin-top:20px">Back to Home</button>
+      <button class="btn btn-ghost mt" onclick="go('s-score')">View Street Score</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       S9: PROFILE
+  ════════════════════════════════════ -->
+  <div class="screen" id="s-profile">
+    <div class="scroll">
+      <div class="prof-hdr">
+        <div class="prof-av-wrap">
+          <div class="prof-av">M</div>
+          <div class="prof-vfy">✓</div>
+        </div>
+        <div class="prof-name">Muhammad</div>
+        <div class="prof-area">📍 Kasur, Punjab</div>
+        <div class="prof-since">Member since August 2026</div>
+      </div>
+      <div class="pad">
+        <div class="badge-card">
+          <div class="bc-ic">🏅</div>
+          <div><div class="bc-ttl">Community Protector</div><div class="bc-sub">Community Contributor</div></div>
+        </div>
+        <div class="prof-stats">
+          <div class="ps"><div class="ps-n">12</div><div class="ps-l">Reports</div></div>
+          <div class="ps"><div class="ps-n">5</div><div class="ps-l">Verified</div></div>
+          <div class="ps"><div class="ps-n">3</div><div class="ps-l">Supported</div></div>
+          <div class="ps"><div class="ps-n">89</div><div class="ps-l">Area Score</div></div>
+        </div>
+        <div class="prof-menu">
+          <div class="pm" onclick="go('s-report')"><span class="pm-ic">📋</span><span class="pm-lbl">My Reports</span><span class="pm-arr">›</span></div>
+          <div class="pm" onclick="go('s-sponsor')"><span class="pm-ic">💚</span><span class="pm-lbl">My Sponsored Hotspots</span><span class="pm-arr">›</span></div>
+          <div class="pm" onclick="go('s-postrain')"><span class="pm-ic">🌧️</span><span class="pm-lbl">Post-Rain Verifications</span><span class="pm-arr">›</span></div>
+          <div class="pm-div"></div>
+          <div class="pm"><span class="pm-ic">🔔</span><span class="pm-lbl">Notifications</span><span class="pm-badge">3</span><span class="pm-arr">›</span></div>
+          <div class="pm"><span class="pm-ic">🌐</span><span class="pm-lbl">Language / زبان</span><span class="pm-val">English</span><span class="pm-arr">›</span></div>
+          <div class="pm-div"></div>
+          <div class="pm"><span class="pm-ic">❓</span><span class="pm-lbl">Help & Support</span><span class="pm-arr">›</span></div>
+          <div class="pm"><span class="pm-ic">💧</span><span class="pm-lbl">About NAYA NAZAM</span><span class="pm-arr">›</span></div>
+        </div>
+        <div class="app-ver">NAYA NAZAM v1.0 • Kasur, Punjab, Pakistan</div>
+      </div>
+      <div class="nav-gap"></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       BOTTOM NAV
+  ════════════════════════════════════ -->
+  <nav class="bnav" id="bnav">
+    <div class="ni" id="ni-home" onclick="nav('s-home','ni-home')">
+      <div class="ni-ic">🏠</div><div class="ni-lbl">Home</div>
+    </div>
+    <div class="ni" id="ni-map" onclick="nav('s-map','ni-map')">
+      <div class="ni-ic">🗺️</div><div class="ni-lbl">Map</div>
+    </div>
+    <div class="ni ni-rep" id="ni-report" onclick="nav('s-report','ni-report')">
+      <div class="rep-circle">➕</div>
+      <div class="ni-lbl" style="color:var(--blue);font-weight:700">Report</div>
+    </div>
+    <div class="ni" id="ni-score" onclick="nav('s-score','ni-score')">
+      <div class="ni-ic">🏆</div><div class="ni-lbl">Score</div>
+    </div>
+    <div class="ni" id="ni-profile" onclick="nav('s-profile','ni-profile')">
+      <div class="ni-ic">👤</div><div class="ni-lbl">Profile</div>
+    </div>
+  </nav>
+
+ </div><!-- /screen-wrap -->
+</div><!-- /frame -->
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* ── NAVIGATION ── */
+const SHOW_NAV = ['s-home','s-map','s-report','s-score','s-profile'];
+const NAV_MAP  = {
+  's-home':'ni-home','s-map':'ni-map',
+  's-report':'ni-report','s-score':'ni-score','s-profile':'ni-profile'
+};
+let hist = [];
+let cur  = 's-ob';
+const MAP_CENTER = [31.1157, 74.4467];
+const MAP_HOTSPOTS = [
+  { id: 'KS-104', location: 'Kot Ghulam Muhammad', position: [31.1157, 74.4467], risk: 'red' },
+  { id: 'KS-112', location: 'Ferozepur Road', position: [31.128, 74.463], risk: 'orange' },
+  { id: 'KS-098', location: 'Near Bus Stand', position: [31.108, 74.441], risk: 'orange' },
+  { id: 'KS-076', location: 'Model Town', position: [31.126, 74.426], risk: 'green' },
+  { id: 'KS-083', location: 'Railway Colony', position: [31.102, 74.432], risk: 'green' },
+  { id: 'KS-091', location: 'Kasur', position: [31.119, 74.462], risk: 'green' },
+];
+const mapInstances = {};
+
+function initializeMap(mapId, zoom) {
+  const container = document.getElementById(mapId);
+  if (!container || mapInstances[mapId]) return;
+
+  if (typeof L === 'undefined') {
+    container.classList.add('map-load-error');
+    container.setAttribute('role', 'alert');
+    container.textContent = 'The map could not be loaded. Check your connection and refresh.';
+    return;
+  }
+
+  const map = L.map(container, { zoomControl: true, scrollWheelZoom: false }).setView(MAP_CENTER, zoom);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
+  }).addTo(map);
+
+  MAP_HOTSPOTS.forEach(hotspot => {
+    const isEasternMarker = hotspot.position[1] > MAP_CENTER[1];
+    const icon = L.divIcon({
+      className: [
+        'prototype-marker-icon',
+        mapId === 'mvpHomeMap' ? 'preview-marker-icon' : '',
+        isEasternMarker ? 'marker-label-left' : '',
+      ].filter(Boolean).join(' '),
+      html: `<div class="prototype-marker" aria-label="Prototype Hotspot ${hotspot.id}"><span class="prototype-marker-dot ${hotspot.risk}"></span><span class="prototype-marker-label"><strong>${hotspot.id}</strong><small>Prototype Hotspot</small></span></div>`,
+      iconSize: mapId === 'mvpHomeMap' ? [16, 16] : [150, 40],
+      iconAnchor: mapId === 'mvpHomeMap'
+        ? [8, 8]
+        : [isEasternMarker ? 142 : 8, 15],
+    });
+    const marker = L.marker(hotspot.position, {
+      icon,
+      title: `Prototype Hotspot ${hotspot.id}`,
+    }).addTo(map);
+
+    if (hotspot.id === 'KS-104') {
+      marker.on('click', () => go('s-hotspot'));
+    } else {
+      marker.bindPopup(
+        `<strong>Prototype Hotspot · ${hotspot.id}</strong><br>${hotspot.location}<br><small>Illustrative only; not officially verified.</small>`,
+      );
+    }
+  });
+
+  if (mapId === 'mvpHomeMap') {
+    map.fitBounds(
+      L.latLngBounds(MAP_HOTSPOTS.map(hotspot => hotspot.position)),
+      { padding: [30, 30], maxZoom: 12 },
+    );
+  } else {
+    map.fitBounds(
+      L.latLngBounds(MAP_HOTSPOTS.map(hotspot => hotspot.position)),
+      { padding: [55, 55], maxZoom: zoom },
+    );
+  }
+
+  mapInstances[mapId] = map;
+}
+
+function refreshMapsForScreen(screenId) {
+  const mapIds = screenId === 's-home'
+    ? [['mvpHomeMap', 12]]
+    : screenId === 's-map'
+      ? [['mvpKasurMap', 13]]
+      : [];
+
+  mapIds.forEach(([mapId, zoom]) => {
+    initializeMap(mapId, zoom);
+    window.requestAnimationFrame(() => {
+      if (mapInstances[mapId]) mapInstances[mapId].invalidateSize({ pan: false });
+    });
+  });
+}
+
+function go(id) {
+  if (id === cur || !document.getElementById(id)) return;
+  hist.push(cur);
+  const prev = document.getElementById(cur);
+  const next = document.getElementById(id);
+  prev.classList.remove('on');
+  next.style.animation = 'sIn .28s cubic-bezier(.25,.46,.45,.94) forwards';
+  next.classList.add('on');
+  cur = id;
+  syncNav();
+  refreshMapsForScreen(id);
+}
+function back() {
+  if (!hist.length) return;
+  const prev = hist.pop();
+  const curr = document.getElementById(cur);
+  const next = document.getElementById(prev);
+  curr.style.animation = 'sOut .25s ease forwards';
+  setTimeout(() => curr.classList.remove('on'), 250);
+  next.style.animation = 'sInR .28s ease forwards';
+  next.classList.add('on');
+  cur = prev;
+  syncNav();
+  refreshMapsForScreen(prev);
+}
+function nav(id, ni) {
+  hist = [];
+  go(id);
+}
+function syncNav() {
+  document.getElementById('bnav').style.display = SHOW_NAV.includes(cur) ? 'flex' : 'none';
+  document.querySelectorAll('.ni').forEach(el => el.classList.remove('act'));
+  const n = NAV_MAP[cur];
+  if (n) document.getElementById(n)?.classList.add('act');
+  document.getElementById('sbar').style.color = ['s-ob','s-ob3'].includes(cur) ? 'white' :
+    ['s-hotspot','s-score','s-postrain-success','s-qr'].includes(cur) ? 'white' : '#111';
+}
+
+/* ── STATUS BAR ── */
+const WHITE_SCREENS = ['s-ob','s-ob3','s-hotspot','s-score','s-qr','s-profile','s-rep-ok','s-spon-ok','s-pr-ok','s-worker-ok'];
+
+/* ── FORMS ── */
+function selP(id) { document.querySelectorAll('.po').forEach(e=>e.classList.remove('sel')); document.getElementById(id).classList.add('sel'); }
+function selSv(id) { document.querySelectorAll('.so').forEach(e=>e.classList.remove('sel')); document.getElementById(id).classList.add('sel'); }
+function selA(id) { document.querySelectorAll('.ao').forEach(e=>e.classList.remove('sel')); document.getElementById(id).classList.add('sel'); }
+function selPy(id) { document.querySelectorAll('.po-pay').forEach(e=>e.classList.remove('sel')); document.getElementById(id).classList.add('sel'); }
+function selPR(el) {
+  document.querySelectorAll('.pr-opt').forEach(e=>{e.style.transform='';e.style.boxShadow=''});
+  el.style.transform='translateX(8px)';el.style.boxShadow='0 4px 16px rgba(0,0,0,.12)';
+  setTimeout(()=>go('s-pr-ok'),400);
+}
+function photoFB(box) {
+  const orig = box.innerHTML;
+  box.innerHTML = '<div class="pb-ic">✅</div><div class="pb-txt" style="color:var(--green)">Photo Added!</div>';
+  setTimeout(()=>{box.innerHTML=orig},2000);
+}
+
+/* ── CLOCK ── */
+function tick() {
+  const d=new Date(),h=d.getHours()%12||12,m=String(d.getMinutes()).padStart(2,'0');
+  document.getElementById('clk').textContent=h+':'+m;
+}
+tick(); setInterval(tick,30000);
+
+/* ── INIT ── */
+syncNav();
+</script>
+</body>
+</html>
