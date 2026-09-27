@@ -367,7 +367,7 @@
 
           <div class="form-section">
             <div class="form-label">Take a Photo</div>
-            <div class="photo-upload" onclick="showPhotoFeedback()">
+            <div class="photo-upload" onclick="openPhotoCapture(this)">
               <div class="photo-upload-inner" id="photoUploadBox">
                 <div class="pu-icon">📷</div>
                 <div class="pu-text">Tap to take photo or upload</div>
@@ -758,7 +758,7 @@
           <div class="upload-flow" id="uploadFlow" style="display:none">
             <div class="upload-step" id="uploadBefore">
               <div class="up-title">Upload Before Photo</div>
-              <div class="photo-upload small" onclick="advanceWorker('before')">
+              <div class="photo-upload small" onclick="openPhotoCapture(this, () => advanceWorker('before'))">
                 <div class="photo-upload-inner">
                   <div class="pu-icon">📷</div>
                   <div class="pu-text">Take photo of current state</div>
@@ -767,7 +767,7 @@
             </div>
             <div class="upload-step hidden" id="uploadAfter">
               <div class="up-title">Upload After Photo</div>
-              <div class="photo-upload small" onclick="advanceWorker('after')">
+              <div class="photo-upload small" onclick="openPhotoCapture(this, () => advanceWorker('after'))">
                 <div class="photo-upload-inner green-upload">
                   <div class="pu-icon">✅</div>
                   <div class="pu-text">Take photo after cleaning</div>
@@ -947,7 +947,7 @@
 
           <div class="form-section">
             <div class="form-label">Upload Photo (Optional)</div>
-            <div class="photo-upload" onclick="showPhotoFeedback()">
+            <div class="photo-upload" onclick="openPhotoCapture(this)">
               <div class="photo-upload-inner">
                 <div class="pu-icon">📷</div>
                 <div class="pu-text">Tap to capture street condition</div>
@@ -1146,7 +1146,9 @@
     </div><!-- /device-screen -->
   </div><!-- /device-frame -->
 
+  <script src="layout.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="camera.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

@@ -197,16 +197,6 @@ function selectPR(type) {
   setTimeout(() => goTo('screen-postrain-success'), 400);
 }
 
-// ── Photo Upload Feedback ───────────────────────────
-function showPhotoFeedback() {
-  const boxes = document.querySelectorAll('.photo-upload-inner');
-  boxes.forEach(box => {
-    const orig = box.innerHTML;
-    box.innerHTML = `<div class="pu-icon">✅</div><div class="pu-text" style="color:var(--green)">Photo Added!</div>`;
-    setTimeout(() => { box.innerHTML = orig; }, 2000);
-  });
-}
-
 // ── Worker Flow ─────────────────────────────────────
 function startJob() {
   const jobCard = document.getElementById('jobCard');
@@ -227,12 +217,12 @@ function advanceWorker(step) {
   if (step === 'before') {
     const before = document.getElementById('uploadBefore');
     const after = document.getElementById('uploadAfter');
-    before.querySelector('.photo-upload-inner').innerHTML = `<div class="pu-icon">✅</div><div class="pu-text" style="color:var(--green)">Before photo uploaded</div>`;
+    before.querySelector('.pu-text').textContent = 'Before photo captured';
     after.classList.remove('hidden');
   } else if (step === 'after') {
     const after = document.getElementById('uploadAfter');
     const done = document.getElementById('markDone');
-    after.querySelector('.photo-upload-inner').innerHTML = `<div class="pu-icon">✅</div><div class="pu-text" style="color:var(--green)">After photo uploaded</div>`;
+    after.querySelector('.pu-text').textContent = 'After photo captured';
     done.classList.remove('hidden');
   }
 }

@@ -38,18 +38,24 @@
       font-family:'Inter',-apple-system,sans-serif;
       background:#1a1a2e;
       display:flex;align-items:center;justify-content:center;
-      min-height:100vh;
+      width:100%;height:100vh;height:100dvh;min-height:0;overflow:hidden;
     }
 
     /* ─── DEVICE ─── */
     .frame{
-      width:390px;height:844px;
+      width:410px;height:844px;
+      flex:0 0 auto;transform:scale(var(--device-scale,1));
       background:#111;border-radius:55px;padding:12px;
       box-shadow:0 0 0 2px #333,0 0 0 6px #222,0 40px 80px rgba(0,0,0,.6);
     }
     .screen-wrap{
       width:100%;height:100%;border-radius:44px;
       overflow:hidden;background:#fff;position:relative;
+    }
+    @media(max-width:600px){
+      body{display:block}
+      .frame{width:100vw;height:100vh;height:100dvh;border-radius:0;padding:0;box-shadow:none;transform:none}
+      .screen-wrap{border-radius:0}
     }
 
     /* ─── STATUS BAR ─── */
@@ -74,6 +80,11 @@
       display:none;flex-direction:column;overflow:hidden;
     }
     .screen.on{display:flex}
+    #s-home{
+      right:auto;bottom:auto;
+      width:calc(100% / 1.15);height:calc(100% / 1.15);
+      scale:1.15;transform-origin:top left;
+    }
     .scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
     .scroll::-webkit-scrollbar{display:none}
     .pt{padding-top:64px}
@@ -234,7 +245,7 @@
     .ob3-tagline{font-size:13px;color:rgba(255,255,255,.75);text-align:center;padding:0 30px;line-height:1.5}
     .ob3-urdu{font-size:16px;color:rgba(255,255,255,.85);font-style:italic;text-align:center;margin-top:6px}
     .ob3-content{background:#fff;padding:26px 22px 22px}
-    .btn-outline{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.5);border-radius:var(--r);padding:13px 20px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;width:100%;text-align:center;margin-top:10px;display:block}
+    .btn-outline{background:transparent;color:var(--blue);border:2px solid var(--blue);border-radius:var(--r);padding:13px 20px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;width:100%;text-align:center;margin-top:10px;display:block}
 
     /* ══════════════════════════════════════════════════
        SCREEN 2 — HOME
@@ -335,6 +346,28 @@
     }
     .map-screen-hotspot-name{font-size:11px;font-weight:700;color:var(--g900)}
     .map-screen-hotspot-sub{font-size:10px;color:var(--g500);margin-top:1px}
+    @media(max-height:650px){
+      .ob-illo{min-height:180px}
+      .ob-content,.ob3-content{padding:16px 20px 12px}
+      .ob-hl{font-size:22px;margin-bottom:4px}
+      .ob-sub{margin-bottom:8px}
+      .dots{margin-bottom:8px}
+      .steps-illo{padding:52px 14px 12px;gap:8px}
+      .sc{padding:10px 6px}
+      .sc-ic{font-size:24px;margin-bottom:3px}
+      .steps-quote{font-size:12px}
+      .ob3-visual{padding-top:42px;gap:7px}
+      .ob3-big-ic{font-size:54px}
+      .ob3-name{font-size:26px}
+      .ob3-urdu{margin-top:2px}
+      .map-screen-area{bottom:232px}
+      .map-screen-sheet{height:150px;padding:8px 12px 0}
+      .map-sheet-handle{margin-bottom:5px}
+      .map-screen-disclaimer{margin-bottom:4px}
+      .map-screen-stats{gap:8px;margin-bottom:2px}
+      .map-screen-hotspots{max-height:58px}
+      .map-screen-hotspot{padding:5px 2px}
+    }
 
     /* Area Card */
     .area-card{
@@ -426,6 +459,21 @@
     .pb-ic{font-size:30px;margin-bottom:6px}
     .pb-txt{font-size:14px;font-weight:600;color:var(--g700)}
     .pb-sub{font-size:11px;color:var(--g400);margin-top:2px}
+    .photo-preview{display:block;width:100%;max-height:190px;object-fit:cover;border-radius:8px}
+    .photo-captured-label{color:var(--green);font-size:12px;font-weight:700}
+    .camera-dialog{width:min(92vw,480px);max-height:90vh;margin:auto;padding:0;border:0;border-radius:16px;color:var(--g900);box-shadow:0 16px 50px rgba(0,0,0,.35)}
+    .camera-dialog::backdrop{background:rgba(0,0,0,.68)}
+    .camera-dialog-content{padding:16px}
+    .camera-dialog-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .camera-dialog-header h2{font-size:18px}
+    .camera-close{border:0;background:var(--g100);border-radius:50%;width:32px;height:32px;font-size:22px;cursor:pointer}
+    .camera-preview{display:block;width:100%;max-height:55vh;min-height:180px;background:#111;border-radius:10px;object-fit:cover}
+    .camera-status{min-height:38px;margin:10px 0;color:var(--g700);font-size:13px;line-height:1.4}
+    .camera-actions{display:flex;flex-wrap:wrap;gap:8px}
+    .camera-actions button{flex:1;min-height:42px;padding:8px 12px;border:0;border-radius:8px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+    .camera-capture{background:var(--blue);color:#fff}
+    .camera-picker{background:var(--g100);color:var(--g700)}
+    .camera-actions button:disabled{opacity:.6;cursor:wait}
 
     .loc-box{background:var(--g50);border-radius:var(--r);padding:12px;margin-bottom:12px}
     .loc-map{height:85px;background:#E8F4E8;border-radius:var(--r-sm);position:relative;overflow:hidden;margin-bottom:10px}
@@ -1035,7 +1083,7 @@
       </div>
 
       <span class="flbl">Take a Photo</span>
-      <div class="photo-box" onclick="photoFB(this)" style="margin-bottom:14px">
+      <div class="photo-box" onclick="openPhotoCapture(this)" style="margin-bottom:14px">
         <div class="pb-ic">📷</div>
         <div class="pb-txt">Tap to take photo or upload</div>
         <div class="pb-sub">Photo helps verify the problem</div>
@@ -1364,7 +1412,7 @@
         <div class="pr-opt rd" onclick="selPR(this)"><div class="pr-oi">🔴</div><div><div class="pr-ot">Severe Waterlogging</div><div class="pr-os">Waterlogging / difficult to pass</div></div></div>
       </div>
       <span class="flbl">Upload Photo (Optional)</span>
-      <div class="photo-box" onclick="photoFB(this)" style="margin-bottom:12px">
+      <div class="photo-box" onclick="openPhotoCapture(this)" style="margin-bottom:12px">
         <div class="pb-ic">📷</div><div class="pb-txt">Capture street condition</div>
       </div>
       <button class="btn-loc" style="margin-bottom:14px">📍 Use Current Location — Kot Ghulam Muhammad, Kasur</button>
@@ -1456,7 +1504,9 @@
  </div><!-- /screen-wrap -->
 </div><!-- /frame -->
 
+<script src="layout.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="camera.js"></script>
 <script>
 /* ── NAVIGATION ── */
 const SHOW_NAV = ['s-home','s-map','s-report','s-score','s-profile'];
@@ -1530,7 +1580,10 @@ function initializeMap(mapId, zoom) {
   } else {
     map.fitBounds(
       L.latLngBounds(MAP_HOTSPOTS.map(hotspot => hotspot.position)),
-      { padding: [55, 55], maxZoom: zoom },
+      {
+        padding: container.clientHeight < 300 ? [16, 16] : [55, 55],
+        maxZoom: zoom,
+      },
     );
   }
 
@@ -1602,11 +1655,6 @@ function selPR(el) {
   document.querySelectorAll('.pr-opt').forEach(e=>{e.style.transform='';e.style.boxShadow=''});
   el.style.transform='translateX(8px)';el.style.boxShadow='0 4px 16px rgba(0,0,0,.12)';
   setTimeout(()=>go('s-pr-ok'),400);
-}
-function photoFB(box) {
-  const orig = box.innerHTML;
-  box.innerHTML = '<div class="pb-ic">✅</div><div class="pb-txt" style="color:var(--green)">Photo Added!</div>';
-  setTimeout(()=>{box.innerHTML=orig},2000);
 }
 
 /* ── CLOCK ── */
