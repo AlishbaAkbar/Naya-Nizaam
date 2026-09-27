@@ -385,7 +385,8 @@
                 <div class="loc-pin">📍</div>
                 <div class="loc-label">Kot Ghulam Muhammad, Kasur</div>
               </div>
-              <button class="btn-location">📍 Use Current Location</button>
+              <button class="btn-location live-location-button" type="button">📍 Use Current Location</button>
+              <div class="loc-info live-location-status" role="status" aria-live="polite">Your current location has not been added yet.</div>
             </div>
           </div>
 
@@ -956,8 +957,8 @@
           </div>
 
           <div class="location-box">
-            <button class="btn-location">📍 Use Current Location</button>
-            <div class="loc-info">Kot Ghulam Muhammad, Kasur • 26 Sep 2026 • 1:36 PM</div>
+            <button class="btn-location live-location-button" type="button">📍 Use Current Location</button>
+            <div class="loc-info live-location-status" role="status" aria-live="polite">Your current location has not been added yet.</div>
           </div>
 
           <button class="btn-primary full" onclick="goTo('screen-postrain-success')" style="margin:16px 0">Submit Verification</button>
@@ -1149,6 +1150,7 @@
   <script src="layout.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="camera.js"></script>
+  <script src="location.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

@@ -680,6 +680,7 @@ body {
 .camera-actions button:disabled { opacity: .6; cursor: wait; }
 
 .location-box { background: var(--gray-50); border-radius: var(--radius); padding: 12px; }
+.live-location-status { overflow-wrap: anywhere; }
 .loc-mini-map {
   height: 90px; background: #E8F4E8; border-radius: var(--radius-sm);
   position: relative; overflow: hidden; margin-bottom: 10px;
